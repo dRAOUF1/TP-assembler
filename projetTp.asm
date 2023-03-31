@@ -378,30 +378,37 @@ view32 proc
     push cx
     push dx
     
-    mov     bx,10         
-    push    bx            
-a: mov     cx,ax          
-    mov     ax,dx          
-    xor     dx,dx          
-    div     bx             
-    xchg    ax,cx          
-    div     bx             
-    push    dx             
-    mov     dx,cx         
-    or      cx,ax         
-    jnz     a             
-    pop     dx            
-b: add     dl,"0"         
-    mov     ah,02h         
-    int     21h            
-    pop     dx             
-    cmp     dx,bx          
-    jb      b             
+    mov bx,10 ;Constante 10 stockee dans BX
+    push bx ;bx est constant donc on peut l'utiliser comme marqueur pour sortir de la boucle            
+    
+    diviser: 
+        mov cx,ax ;Stocke temporairement le partie bassse dans CX
+        mov ax,dx ;Stocke temporairement le partie bassse dans AX
+        
+        xor dx,dx ;DX=0 pour la division DX:AX / BX
+        div bx ; AX est le quotient haut, le reste est utilise dans la prochaine division
+        xchg ax,cx ;Deplace le quotient de la partie haute dans CX et la partie basse(quotient) dans AX 
+        div bx ; AX est le quotient bas, le reste est dans DX=[0,9]
+        push dx ;Sauvegarde le reste 
+        mov dx,cx ;Deplacer le quotient de la partie haute dans DX
+        or cx,ax ;=0 uniquement si cx=0 et ax=0 (quotient de la partie haute et celui de la partie basse =0)
+        jnz diviser ;Si !=0 boucler
+        pop dx ;Recuperer l'unite
+    
+    afficher: 
+        add dl,30h ;Transforme en caractère [0,9] -> ["0","9"]
+        mov ah,02h ;Afficher
+        int 21h 
+        pop dx ;Recupere le prochain rang
+        cmp dx,bx ;SI dx=10 alors on est arrive a la fin (le bx empiler au debut)
+        jb afficher 
+             
     
     pop dx
     pop cx
     pop bx
-    pop ax
+    pop ax 
+    
     ret
 view32 ENDP
     
