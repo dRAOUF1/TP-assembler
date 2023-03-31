@@ -1,4 +1,5 @@
 data segment
+messageIntro DB "Calculatrice développée par Touzene Abderraouf & Abed ABdeldjalil", 0Dh, 0Ah, '$'
 msg db 0dh,0ah,"1-Addition '+'",0dh,0ah,"2-Multiplication",0dh,0ah,"3-Soustraction",0dh,0ah,"4-Division",0dh,0ah,"$"
 msg2 db "Entrer le 1er nombre : $"
 msg3 db 0dh,0ah,"Enter le 2eme nombre : $" 
@@ -29,6 +30,11 @@ start:
     mov ax,stack
     mov ss,ax
     
+    ; Affichage du message d'introduction
+    MOV AH, 9
+    LEA DX, messageIntro
+    INT 21h
+
     mov ah,9
     mov dx,offset msg2
     int 21h 
