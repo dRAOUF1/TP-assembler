@@ -155,7 +155,7 @@ Soustraction:
     
 
     
-    pop dx ;    Recuperer a+b
+    pop dx ;    Recuperer a-b
 
     call AfficherNo; Afficher le resultat
     
@@ -183,8 +183,9 @@ Multiplication:
       
     
     mul bx
-    jo erreur;  En cas d'overflow
-    push ax;    Sauvegarder le resultat
+   
+    push ax;    Sauvegarder le resultat  
+    push dx
  
 
     
@@ -192,7 +193,7 @@ Multiplication:
     call AfficherNo
     
     mov ah,9
-    mov dx, offset fois;    Afficher -
+    mov dx, offset fois;    Afficher x
     int 21h
     
     mov dx,[bp+10] 
@@ -202,11 +203,20 @@ Multiplication:
     mov dx, offset egale;   Afficher =
     int 21h 
     
+    pop dx ;    Recuperer la 1ere partie de axb       
+    pop ax
+    cmp dx,0
+    je Partie2
 
-    
-    pop dx ;    Recuperer a+b
+    call view32; Afficher le resultat
+    jmp exit
+
+Partie2:       
+    mov dx,ax ;    Recuperer la 2eme partie de axb
 
     call AfficherNo; Afficher le resultat
+    
+    
     
     pop bp ;    Restaurer le contexte
     pop dx
@@ -340,6 +350,9 @@ QuatreChiffres:
      
 CinqeChiffres:
     mov cx,10000
+    jmp fin
+    
+MulChiffre:
     
 fin:
 
@@ -355,8 +368,42 @@ ViewNo proc
     int 21h
     pop dx
     pop ax
-    ret;?? 
-ViewNo ENDP
+    ret 
+ViewNo ENDP 
+
+
+view32 proc
+    push ax
+    push bx
+    push cx
+    push dx
+    
+    mov     bx,10         
+    push    bx            
+a: mov     cx,ax          
+    mov     ax,dx          
+    xor     dx,dx          
+    div     bx             
+    xchg    ax,cx          
+    div     bx             
+    push    dx             
+    mov     dx,cx         
+    or      cx,ax         
+    jnz     a             
+    pop     dx            
+b: add     dl,"0"         
+    mov     ah,02h         
+    int     21h            
+    pop     dx             
+    cmp     dx,bx          
+    jb      b             
+    
+    pop dx
+    pop cx
+    pop bx
+    pop ax
+    ret
+view32 ENDP
     
 code ENDS
 
