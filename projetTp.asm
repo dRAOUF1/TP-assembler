@@ -155,7 +155,7 @@ Soustraction:
     
 
     
-    pop dx ;    Recuperer a+b
+    pop dx ;    Recuperer a-b
 
     call AfficherNo; Afficher le resultat
     
@@ -183,8 +183,9 @@ Multiplication:
       
     
     mul bx
-    jo erreur;  En cas d'overflow
-    push ax;    Sauvegarder le resultat
+   
+    push ax;    Sauvegarder le resultat  
+    push dx
  
 
     
@@ -192,7 +193,7 @@ Multiplication:
     call AfficherNo
     
     mov ah,9
-    mov dx, offset fois;    Afficher -
+    mov dx, offset fois;    Afficher x
     int 21h
     
     mov dx,[bp+10] 
@@ -202,11 +203,20 @@ Multiplication:
     mov dx, offset egale;   Afficher =
     int 21h 
     
+    pop dx ;    Recuperer la 1ere partie de axb       
+    pop ax
+    cmp dx,0
+    je Partie2
 
-    
-    pop dx ;    Recuperer a+b
+    call view32; Afficher le resultat
+    jmp exit
+
+Partie2:       
+    mov dx,ax ;    Recuperer la 2eme partie de axb
 
     call AfficherNo; Afficher le resultat
+    
+    
     
     pop bp ;    Restaurer le contexte
     pop dx
@@ -340,6 +350,9 @@ QuatreChiffres:
      
 CinqeChiffres:
     mov cx,10000
+    jmp fin
+    
+MulChiffre:
     
 fin:
 
@@ -355,8 +368,49 @@ ViewNo proc
     int 21h
     pop dx
     pop ax
-    ret;?? 
-ViewNo ENDP
+    ret 
+ViewNo ENDP 
+
+
+view32 proc
+    push ax
+    push bx
+    push cx
+    push dx
+    
+    mov bx,10 ;Constante 10 stockee dans BX
+    push bx ;bx est constant donc on peut l'utiliser comme marqueur pour sortir de la boucle            
+    
+    diviser: 
+        mov cx,ax ;Stocke temporairement le partie bassse dans CX
+        mov ax,dx ;Stocke temporairement le partie bassse dans AX
+        
+        xor dx,dx ;DX=0 pour la division DX:AX / BX
+        div bx ; AX est le quotient haut, le reste est utilise dans la prochaine division
+        xchg ax,cx ;Deplace le quotient de la partie haute dans CX et la partie basse(quotient) dans AX 
+        div bx ; AX est le quotient bas, le reste est dans DX=[0,9]
+        push dx ;Sauvegarde le reste 
+        mov dx,cx ;Deplacer le quotient de la partie haute dans DX
+        or cx,ax ;=0 uniquement si cx=0 et ax=0 (quotient de la partie haute et celui de la partie basse =0)
+        jnz diviser ;Si !=0 boucler
+        pop dx ;Recuperer l'unite
+    
+    afficher: 
+        add dl,30h ;Transforme en caractère [0,9] -> ["0","9"]
+        mov ah,02h ;Afficher
+        int 21h 
+        pop dx ;Recupere le prochain rang
+        cmp dx,bx ;SI dx=10 alors on est arrive a la fin (le bx empiler au debut)
+        jb afficher 
+             
+    
+    pop dx
+    pop cx
+    pop bx
+    pop ax 
+    
+    ret
+view32 ENDP
     
 code ENDS
 
