@@ -2,20 +2,18 @@
 data segment
 
 ; "messageIntro", contient le nom des developpeurs de la calculatrice.
-messageIntro DB "Calculatrice developpee par Touzene Abderraouf & Abed ABdeldjalil", 0Dh, 0Ah, '$'
+messageIntro DB "Calculatrice developpee par Touzene Abderraouf & Abed Abdeldjalil", 0Dh, 0Ah,0Dh, 0Ah, '$'
 
 ;"Menu", affiche un menu a l'utilisateur et l'invite a choisir une operation : addition, soustraction, multiplication ou division.
-Menu db 0dh,0ah," Veuillez choisir l'operation � effectuer : ",0dh,0ah,"'+' pour l'addition ",0dh,0ah,"'-' pour la soustraction ",0dh,0ah,"'*' pour la multiplication",0dh,0ah,"'/' pour la devision.",0dh,0ah,"$"
+Menu db 0dh,0ah," Veuillez choisir l'operation a effectuer : ",0dh,0ah,"'+' pour l'addition ",0dh,0ah,"'-' pour la soustraction ",0dh,0ah,"'*' pour la multiplication",0dh,0ah,"'/' pour la division.",0dh,0ah,"$"
 
-;"Num1" et "Num2", demandent a l'utilisateur d'entrer les deux nombres sur lesquels il souhaite effectuer l'op�ration selectionnee.
+;"Num1" et "Num2", demandent a l'utilisateur d'entrer les deux nombres sur lesquels il souhaite effectuer l'operation selectionnee.
 Num1 db "Entrer le 1er nombre : $"
 Num2 db 0dh,0ah,"Enter le 2eme nombre : $" 
 
 ;"Erreurmsg", est utilisee pour afficher un message d'erreur si quelque chose se passe mal pendant le calcul.
 Erreurmsg db 0dh,0ah,"Erreur ",0dh,0ah,"$"
 
-;"Resultatmsg", est utilisee pour afficher le resultat du calcul a l'utilisateur.
-Resultatmsg db 0dh,0ah,"Resultat : $"
 
 ;"Finmsg", indique la fin du programme et invite l'utilisateur a appuyer sur n'importe quelle touche pour sortir.
 Finmsg db 0dh,0ah,"Fin: press any key..",0dh,0ah,"$" 
@@ -78,7 +76,7 @@ Input2:
     push dx;    empiler le nombre lu (a)
     
     mov ah,9
-    mov dx,offset msg3
+    mov dx,offset Num2
     int 21h  
     
     mov cx,0;   avant chaque lecture
@@ -100,7 +98,7 @@ Operation:
     cmp al,2dh
     je Soustraction 
     
-    cmp al,78h
+    cmp al,2Ah
     je Multiplication  
     
     cmp al,2Fh
