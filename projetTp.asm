@@ -32,7 +32,7 @@ start:
     mov ah,9
     mov dx,offset msg2
     int 21h 
-    
+
 Input10:    
     mov cx,0;   Obligatoir avant chaque lecture
     call InputNo10 
@@ -227,7 +227,7 @@ Multiplication:
    
     push ax;    Sauvegarder le resultat  
     push dx
-    jmp Multiplication2
+
 Multiplication10:
     
     mov dx,[bp+2] ;    Afficher a
@@ -275,11 +275,7 @@ Multiplication2:
     jmp exit
 
 Division:
-    push ax;    Sauvegarder la contexte
-    push bx
-    push cx
-    push dx
-    push bp
+
     
     mov ah,9
     mov dx, offset retour
@@ -287,21 +283,23 @@ Division:
 
     mov bp,sp  
     xor dx,dx  
-    mov bx,[bp+10]; bx=b
-    mov ax,[bp+12]; dx=a 
+    mov bx,[bp]; bx=b
+    mov ax,[bp+2]; dx=a 
     
     div bx
     jo erreur
-    push ax   
+    push ax
+
+Division10:  
     
-    mov dx,[bp+12] ;    Afficher a
+    mov dx,[bp+2] ;    Afficher a
     call AfficherNo10
     
     mov ah,9
     mov dx, offset par;    Afficher /
     int 21h
     
-    mov dx,[bp+10] 
+    mov dx,[bp] 
     call AfficherNo10;    Afficher b 
         
     mov ah,9
@@ -310,14 +308,28 @@ Division:
     
     pop dx ;    Recuperer  a/b       
     call AfficherNo10 
+   
+    jmp exit  
+
+Division2:
+    mov dx,[bp+2] ;    Afficher a
+    call AfficherNo2
     
-    pop bp ;    Restaurer le contexte
-    pop dx
-    pop cx
-    pop bx
-    pop ax
+    mov ah,9
+    mov dx, offset par;    Afficher /
+    int 21h
     
-    jmp exit
+    mov dx,[bp] 
+    call AfficherNo2;    Afficher b 
+        
+    mov ah,9
+    mov dx, offset egale;   Afficher =
+    int 21h 
+    
+    pop dx ;    Recuperer  a/b       
+    call AfficherNo2 
+   
+    jmp exit 
     
              
 
@@ -330,7 +342,11 @@ exit:
     int 16h
     
     mov ah,4ch
-    int 21h
+    int 21h 
+    
+    
+    
+    ;Debut des procedure
         
 InputNo10 proc
     mov ah,01
@@ -578,7 +594,7 @@ AfficherNo2 proc
     clc
     rol dx,1
     ror dx,1
-    jnc AvantBoucle10
+    jnc AvantBoucle2
     neg dx
 
     push ax
