@@ -1,17 +1,17 @@
 data segment
-msg db 0dh,0ah,"1-Addition '+'",0dh,0ah,"2-Multiplication",0dh,0ah,"3-Soustraction",0dh,0ah,"4-Division",0dh,0ah,"$"
-msg2 db "Entrer le 1er nombre : $"
-msg3 db 0dh,0ah,"Enter le 2eme nombre : $" 
-msg4 db 0dh,0ah,"Erreur ",0dh,0ah,"$"
-msg5 db 0dh,0ah,"Resultat : $"
-msg6 db 0dh,0ah,"Fin: press any key..",0dh,0ah,"$" 
-saut db 0dh,0ah,"$"
-retour db 0dh,"$"
-plus db " + $"
-moins db " - $"
-fois db " x $"
-par db " / $"
-egale db " = $"
+    msg db 0dh,0ah,"1-Addition '+'",0dh,0ah,"2-Multiplication",0dh,0ah,"3-Soustraction",0dh,0ah,"4-Division",0dh,0ah,"$"
+    msg2 db "Entrer le 1er nombre : $"
+    msg3 db 0dh,0ah,"Enter le 2eme nombre : $" 
+    msg4 db 0dh,0ah,"Erreur ",0dh,0ah,"$"
+    msg5 db 0dh,0ah,"Resultat : $"
+    msg6 db 0dh,0ah,"Fin: press any key..",0dh,0ah,"$" 
+    saut db 0dh,0ah,"$"
+    retour db 0dh,"$"
+    plus db " + $"
+    moins db " - $"
+    fois db " x $"
+    par db " / $"
+    egale db " = $"
 data ends
 
 stack segment
@@ -60,9 +60,11 @@ start:
     je Soustraction 
     
     cmp al,78h
-    je Multiplication
-    ;
-    ;
+    je Multiplication  
+    
+    cmp al,2Fh
+    je Division
+
 erreur:
     mov ah,9
     mov dx, offset msg4
@@ -208,15 +210,12 @@ Multiplication:
     cmp dx,0
     je Partie2
 
-    call view32; Afficher le resultat
-    jmp exit
-
-Partie2:       
+    call view32; Afficher le resultat 
+    
+ Partie2:       
     mov dx,ax ;    Recuperer la 2eme partie de axb
 
     call AfficherNo; Afficher le resultat
-    
-    
     
     pop bp ;    Restaurer le contexte
     pop dx
@@ -224,7 +223,53 @@ Partie2:
     pop bx
     pop ax
     jmp exit
+
+Division:
+    push ax;    Sauvegarder la contexte
+    push bx
+    push cx
+    push dx
+    push bp
     
+    mov ah,9
+    mov dx, offset retour
+    int 21h  
+
+    mov bp,sp  
+    xor dx,dx  
+    mov bx,[bp+10]; bx=b
+    mov ax,[bp+12]; dx=a 
+    
+    div bx
+    jo erreur
+    push ax   
+    
+    mov dx,[bp+12] ;    Afficher a
+    call AfficherNo
+    
+    mov ah,9
+    mov dx, offset par;    Afficher /
+    int 21h
+    
+    mov dx,[bp+10] 
+    call AfficherNo;    Afficher b 
+        
+    mov ah,9
+    mov dx, offset egale;   Afficher =
+    int 21h 
+    
+    pop dx ;    Recuperer  a/b       
+    call AfficherNo 
+    
+    pop bp ;    Restaurer le contexte
+    pop dx
+    pop cx
+    pop bx
+    pop ax
+    
+    jmp exit
+    
+             
 
 exit:
     mov dx,offset msg6
@@ -255,29 +300,37 @@ InputNo proc
     sub ax,30h;     convertire en chiffre
     mov ah,0;       pour push la valeur lu correctement
     push ax
-    inc cx;         le nombre de chiffres du nombre lu
+    inc cx;         le nombre de chiffres du nombre lu 
+    
     jmp InputNo
-    ret
+    ret  
+    
 InputNo ENDP
     
 FormNo proc
-    pop ax
+    pop ax       
+    
     push dx;    sauvegarder dx (modifier par mul)
     mul bx;     mettre la chiffre au bon rang
     jo erreur
-    pop dx;     restaurer dx
+    pop dx;     restaurer dx 
+    
     add dx,ax
-    jo erreur;  valeur entrer par l'utilisateur superieur a 7FFFh
+    jo erreur;  valeur entrer par l'utilisateur superieur a 7FFFh  
+    
     mov ax,bx;  enregister bx dans ax pour la multiplication apres
     mov bx,10
     push dx
     mul bx;     pour avancer au rang suivant (ax=bx*10)
     pop dx
-    mov bx,ax;  recuperer le nouveau bx
+    mov bx,ax;  recuperer le nouveau bx 
+    
     dec cx;     decrementer le compteur de chiffre du nombre
     cmp cx,0;   si le nombre de chiffre restant est superieur a 0 on refait l'operation
     ja FormNo
-    ret ;       sinon return
+    
+    ret ;       sinon return  
+    
 FormNo ENDP
 
 
@@ -287,20 +340,20 @@ View proc
     push cx
     push dx 
     
- finSauvgarde:
-            mov ax,dx
-            mov dx,0
-            div cx
-            call ViewNo
-            mov bx,dx
-            mov dx,0
-            mov ax,cx
-            mov cx,10
-            div cx
-            mov dx,bx
-            mov cx,ax
-            cmp ax,0  
-            jne finSauvgarde 
+    finSauvgarde:
+                mov ax,dx
+                mov dx,0
+                div cx
+                call ViewNo
+                mov bx,dx
+                mov dx,0
+                mov ax,cx
+                mov cx,10
+                div cx
+                mov dx,bx
+                mov cx,ax
+                cmp ax,0  
+                jne finSauvgarde 
     pop dx
     pop cx
     pop bx 
@@ -326,40 +379,41 @@ AfficherNo proc
     int 21h
     pop dx
     pop ax 
+        
+    UnChiffre:
+        cmp dx,10
+        jae DeuxChiffres
+        mov cx,1
+        jmp fin
+    DeuxChiffres:
+        cmp dx,100
+        jae TroisChiffres
+        mov cx,10
+        jmp fin
+    TroisChiffres:
+        cmp dx,1000
+        jae QuatreChiffres
+        mov cx,100
+        jmp fin 
+    QuatreChiffres:  
+        cmp dx,10000
+        jae CinqeChiffres
+        mov cx,1000
+        jmp fin
+         
+    CinqeChiffres:
+        mov cx,10000
+        jmp fin
+        
+        
+    fin:
     
-UnChiffre:
-    cmp dx,10
-    jae DeuxChiffres
-    mov cx,1
-    jmp fin
-DeuxChiffres:
-    cmp dx,100
-    jae TroisChiffres
-    mov cx,10
-    jmp fin
-TroisChiffres:
-    cmp dx,1000
-    jae QuatreChiffres
-    mov cx,100
-    jmp fin 
-QuatreChiffres:  
-    cmp dx,10000
-    jae CinqeChiffres
-    mov cx,1000
-    jmp fin
-     
-CinqeChiffres:
-    mov cx,10000
-    jmp fin
-    
-MulChiffre:
-    
-fin:
-
-    call View  
+        call View 
+         
     ret
       
-ViewNo proc
+ViewNo proc 
+    
     push ax
     push dx
     mov dx,ax
@@ -368,11 +422,14 @@ ViewNo proc
     int 21h
     pop dx
     pop ax
-    ret 
+    
+    ret   
+    
 ViewNo ENDP 
 
 
 view32 proc
+    
     push ax
     push bx
     push cx
@@ -396,7 +453,7 @@ view32 proc
         pop dx ;Recuperer l'unite
     
     afficher: 
-        add dl,30h ;Transforme en caractère [0,9] -> ["0","9"]
+        add dl,30h ;Transforme en caractere [0,9] -> ["0","9"]
         mov ah,02h ;Afficher
         int 21h 
         pop dx ;Recupere le prochain rang
@@ -409,7 +466,8 @@ view32 proc
     pop bx
     pop ax 
     
-    ret
+    ret  
+    
 view32 ENDP
     
 code ENDS
