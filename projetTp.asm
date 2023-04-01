@@ -157,24 +157,24 @@ Soustraction:
     int 21h  
 
     mov bp,sp    
-    mov bx,[bp+10]; bx=b
-    mov dx,[bp+12]; dx=a 
+    mov bx,[bp]; bx=b
+    mov dx,[bp+2]; dx=a 
       
     
     SUB dx,bx
     jo erreur;  En cas d'overflow
     push dx;    Sauvegarder le resultat
- 
+    
 Soustraction10:
     
-    mov dx,[bp+12] ;    Afficher a
+    mov dx,[bp+2] ;    Afficher a
     call AfficherNo10
     
     mov ah,9
     mov dx, offset moins;    Afficher -
     int 21h
     
-    mov dx,[bp+10] 
+    mov dx,[bp] 
     call AfficherNo10;    Afficher b 
         
     mov ah,9
@@ -187,11 +187,29 @@ Soustraction10:
 
     call AfficherNo10; Afficher le resultat
     jmp exit
-    pop bp ;    Restaurer le contexte
-    pop dx
-    pop cx
-    pop bx
-    pop ax
+    
+Soustraction2:
+        
+    mov dx,[bp+2] ;    Afficher a
+    call AfficherNo2
+    
+    mov ah,9
+    mov dx, offset moins;    Afficher -
+    int 21h
+    
+    mov dx,[bp] 
+    call AfficherNo2;    Afficher b 
+        
+    mov ah,9
+    mov dx, offset egale;   Afficher =
+    int 21h 
+    
+
+    
+    pop dx ;    Recuperer a-b
+
+    call AfficherNo2; Afficher le resultat
+
     jmp exit
 
 Multiplication:
