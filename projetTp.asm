@@ -34,7 +34,7 @@ start:
     int 21h 
     
     mov cx,0;   Obligatoir avant chaque lecture
-    call InputNo 
+    call InputNo10 
     
     push dx;    empiler le nombre lu (a)
     
@@ -43,7 +43,7 @@ start:
     int 21h  
     
     mov cx,0;   avant chaque lecture
-    call InputNo 
+    call InputNo10 
     push dx;    empiler le nombre lu (b)
     
     mov ah,9
@@ -93,14 +93,14 @@ Addition:
 
     
     mov dx,[bp+12] ;    Afficher a
-    call AfficherNo
+    call AfficherNo10
     
     mov ah,9
     mov dx, offset plus;    Afficher +
     int 21h
     
     mov dx,[bp+10] 
-    call AfficherNo;    Afficher b 
+    call AfficherNo10;    Afficher b 
         
     mov ah,9
     mov dx, offset egale;   Afficher =
@@ -110,7 +110,7 @@ Addition:
     
     pop dx ;    Recuperer a+b
 
-    call AfficherNo; Afficher le resultat
+    call AfficherNo10; Afficher le resultat
     
     pop bp ;    Restaurer le contexte
     pop dx
@@ -142,14 +142,14 @@ Soustraction:
 
     
     mov dx,[bp+12] ;    Afficher a
-    call AfficherNo
+    call AfficherNo10
     
     mov ah,9
     mov dx, offset moins;    Afficher -
     int 21h
     
     mov dx,[bp+10] 
-    call AfficherNo;    Afficher b 
+    call AfficherNo10;    Afficher b 
         
     mov ah,9
     mov dx, offset egale;   Afficher =
@@ -159,7 +159,7 @@ Soustraction:
     
     pop dx ;    Recuperer a-b
 
-    call AfficherNo; Afficher le resultat
+    call AfficherNo10; Afficher le resultat
     
     pop bp ;    Restaurer le contexte
     pop dx
@@ -192,14 +192,14 @@ Multiplication:
 
     
     mov dx,[bp+12] ;    Afficher a
-    call AfficherNo
+    call AfficherNo10
     
     mov ah,9
     mov dx, offset fois;    Afficher x
     int 21h
     
     mov dx,[bp+10] 
-    call AfficherNo;    Afficher b 
+    call AfficherNo10;    Afficher b 
         
     mov ah,9
     mov dx, offset egale;   Afficher =
@@ -210,12 +210,12 @@ Multiplication:
     cmp dx,0
     je Partie2
 
-    call view32; Afficher le resultat 
+    call view32_10; Afficher le resultat 
     
  Partie2:       
     mov dx,ax ;    Recuperer la 2eme partie de axb
 
-    call AfficherNo; Afficher le resultat
+    call AfficherNo10; Afficher le resultat
     
     pop bp ;    Restaurer le contexte
     pop dx
@@ -245,21 +245,21 @@ Division:
     push ax   
     
     mov dx,[bp+12] ;    Afficher a
-    call AfficherNo
+    call AfficherNo10
     
     mov ah,9
     mov dx, offset par;    Afficher /
     int 21h
     
     mov dx,[bp+10] 
-    call AfficherNo;    Afficher b 
+    call AfficherNo10;    Afficher b 
         
     mov ah,9
     mov dx, offset egale;   Afficher =
     int 21h 
     
     pop dx ;    Recuperer  a/b       
-    call AfficherNo 
+    call AfficherNo10 
     
     pop bp ;    Restaurer le contexte
     pop dx
@@ -282,14 +282,14 @@ exit:
     mov ah,4ch
     int 21h
         
-InputNo proc
+InputNo10 proc
     mov ah,01
     int 21h
     
     mov dx,0
     mov bx,1;       initialiser bx avant de former le nombre 
     cmp al,0dh;     enter key
-    je FormNo
+    je FormNo10
     
     ;                 0<=al<=9
     cmp al,30h; 30h code asci 0
@@ -302,12 +302,12 @@ InputNo proc
     push ax
     inc cx;         le nombre de chiffres du nombre lu 
     
-    jmp InputNo
+    jmp InputNo10
     ret  
     
-InputNo ENDP
+InputNo10 ENDP
     
-FormNo proc
+FormNo10 proc
     pop ax       
     
     push dx;    sauvegarder dx (modifier par mul)
@@ -327,14 +327,14 @@ FormNo proc
     
     dec cx;     decrementer le compteur de chiffre du nombre
     cmp cx,0;   si le nombre de chiffre restant est superieur a 0 on refait l'operation
-    ja FormNo
+    ja FormNo10
     
     ret ;       sinon return  
     
-FormNo ENDP
+FormNo10 ENDP
 
 
-View proc
+View10 proc
     push ax
     push bx
     push cx
@@ -344,7 +344,7 @@ View proc
                 mov ax,dx
                 mov dx,0
                 div cx
-                call ViewNo
+                call ViewNo10
                 mov bx,dx
                 mov dx,0
                 mov ax,cx
@@ -361,15 +361,15 @@ View proc
 
     ret
     
-View ENDP
+View10 ENDP
 
 
-AfficherNo proc 
+AfficherNo10 proc 
 
     clc
     rol dx,1
     ror dx,1
-    jnc UnChiffre
+    jnc UnChiffre10
     neg dx
 
     push ax
@@ -380,39 +380,39 @@ AfficherNo proc
     pop dx
     pop ax 
         
-    UnChiffre:
+    UnChiffre10:
         cmp dx,10
-        jae DeuxChiffres
+        jae DeuxChiffres10
         mov cx,1
         jmp fin
-    DeuxChiffres:
+    DeuxChiffres10:
         cmp dx,100
-        jae TroisChiffres
+        jae TroisChiffres10
         mov cx,10
         jmp fin
-    TroisChiffres:
+    TroisChiffres10:
         cmp dx,1000
-        jae QuatreChiffres
+        jae QuatreChiffres10
         mov cx,100
         jmp fin 
-    QuatreChiffres:  
+    QuatreChiffres10:  
         cmp dx,10000
-        jae CinqeChiffres
+        jae CinqeChiffres10
         mov cx,1000
         jmp fin
          
-    CinqeChiffres:
+    CinqeChiffres10:
         mov cx,10000
         jmp fin
         
         
     fin:
     
-        call View 
+        call View10 
          
     ret
       
-ViewNo proc 
+ViewNo10 proc 
     
     push ax
     push dx
@@ -425,10 +425,10 @@ ViewNo proc
     
     ret   
     
-ViewNo ENDP 
+ViewNo10 ENDP 
 
 
-view32 proc
+view32_10 proc
     
     push ax
     push bx
@@ -468,7 +468,7 @@ view32 proc
     
     ret  
     
-view32 ENDP
+view32_10 ENDP
     
 code ENDS
 
