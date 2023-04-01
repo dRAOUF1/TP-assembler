@@ -1,10 +1,7 @@
 data segment
-<<<<<<< Updated upstream
 messageIntro DB "Calculatrice developpee par Touzene Abderraouf & Abed ABdeldjalil", 0Dh, 0Ah, '$'
 msg db 0dh,0ah,"1-Addition '+'",0dh,0ah,"2-Multiplication",0dh,0ah,"3-Soustraction",0dh,0ah,"4-Division",0dh,0ah,"$"
-=======
 Menu db 0dh,0ah," Veuillez choisir l’opération à effectuer : ‘+’ pour l’addition, ‘-’ pour la soustraction , ‘*’ pour la multiplication, ‘/’ pour la devision. $"
->>>>>>> Stashed changes
 msg2 db "Entrer le 1er nombre : $"
 msg3 db 0dh,0ah,"Enter le 2eme nombre : $" 
 msg4 db 0dh,0ah,"Erreur ",0dh,0ah,"$"
