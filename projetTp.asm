@@ -213,36 +213,31 @@ Soustraction2:
     jmp exit
 
 Multiplication:
-    push ax;    Sauvegarder la contexte
-    push bx
-    push cx
-    push dx
-    push bp
     
     mov ah,9
     mov dx, offset retour
     int 21h  
 
     mov bp,sp    
-    mov bx,[bp+10]; bx=b
-    mov ax,[bp+12]; dx=a 
+    mov bx,[bp]; bx=b
+    mov ax,[bp+2]; dx=a 
       
     
     mul bx
    
     push ax;    Sauvegarder le resultat  
     push dx
- 
-
+    jmp Multiplication2
+Multiplication10:
     
-    mov dx,[bp+12] ;    Afficher a
+    mov dx,[bp+2] ;    Afficher a
     call AfficherNo10
     
     mov ah,9
     mov dx, offset fois;    Afficher x
     int 21h
     
-    mov dx,[bp+10] 
+    mov dx,[bp] 
     call AfficherNo10;    Afficher b 
         
     mov ah,9
@@ -250,22 +245,33 @@ Multiplication:
     int 21h 
     
     pop dx ;    Recuperer la 1ere partie de axb       
-    pop ax
-    cmp dx,0
-    je Partie2
+    pop ax ;    Recuperer la 2eme partie de axb 
+
 
     call view32_10; Afficher le resultat 
-    
- Partie2:       
-    mov dx,ax ;    Recuperer la 2eme partie de axb
+    jmp exit
 
-    call AfficherNo10; Afficher le resultat
+
+Multiplication2:
+    mov dx,[bp+2] ;    Afficher a
+    call AfficherNo2
     
-    pop bp ;    Restaurer le contexte
-    pop dx
-    pop cx
-    pop bx
+    mov ah,9
+    mov dx, offset fois;    Afficher x
+    int 21h
+    
+    mov dx,[bp] 
+    call AfficherNo2;    Afficher b 
+        
+    mov ah,9
+    mov dx, offset egale;   Afficher =
+    int 21h 
+    
+    pop dx ;    Recuperer la 1ere partie de axb       
     pop ax
+    
+
+    call view32_2; Afficher le resultat 
     jmp exit
 
 Division:
@@ -568,11 +574,11 @@ FormNo2 proc
 FormNo2 ENDP
 
 AfficherNo2 proc 
-
+    
     clc
     rol dx,1
     ror dx,1
-    jnc AvantBoucle2
+    jnc AvantBoucle10
     neg dx
 
     push ax
@@ -584,7 +590,7 @@ AfficherNo2 proc
     pop dx 
     pop bx
     pop ax 
-    
+
     AvantBoucle2: 
         push ax
         push bx
@@ -642,7 +648,50 @@ View2 proc
 
     ret
     
-View2 ENDP
+View2 ENDP 
+
+view32_2 proc
+    
+    push ax
+    push bx
+    push cx
+    push dx
+    
+    mov bx,2 ;Constante 10 stockee dans BX
+    push bx ;bx est constant donc on peut l'utiliser comme marqueur pour sortir de la boucle            
+    
+    diviser2: 
+        mov cx,ax ;Stocke temporairement le partie bassse dans CX
+        mov ax,dx ;Stocke temporairement le partie bassse dans AX
+        
+        xor dx,dx ;DX=0 pour la division DX:AX / BX
+        div bx ; AX est le quotient haut, le reste est utilise dans la prochaine division
+        xchg ax,cx ;Deplace le quotient de la partie haute dans CX et la partie basse(quotient) dans AX 
+        div bx ; AX est le quotient bas, le reste est dans DX=[0,9]
+        push dx ;Sauvegarde le reste 
+        mov dx,cx ;Deplacer le quotient de la partie haute dans DX
+        or cx,ax ;=0 uniquement si cx=0 et ax=0 (quotient de la partie haute et celui de la partie basse =0)
+        jnz diviser2 ;Si !=0 boucler
+        pop dx ;Recuperer l'unite
+    
+    afficher2: 
+        add dl,30h ;Transforme en caractere [0,9] -> ["0","9"]
+        mov ah,02h ;Afficher
+        int 21h 
+        pop dx ;Recupere le prochain rang
+        cmp dx,bx ;SI dx=10 alors on est arrive a la fin (le bx empiler au debut)
+        jb afficher2 
+             
+    
+    pop dx
+    pop cx
+    pop bx
+    pop ax 
+    
+    ret  
+    
+view32_2 ENDP  
+
     
 code ENDS
 
