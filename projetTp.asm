@@ -1,17 +1,35 @@
+
 data segment
-    msg db 0dh,0ah,"1-Addition '+'",0dh,0ah,"2-Multiplication",0dh,0ah,"3-Soustraction",0dh,0ah,"4-Division",0dh,0ah,"$"
-    msg2 db "Entrer le 1er nombre : $"
-    msg3 db 0dh,0ah,"Enter le 2eme nombre : $" 
-    msg4 db 0dh,0ah,"Erreur ",0dh,0ah,"$"
-    msg5 db 0dh,0ah,"Resultat : $"
-    msg6 db 0dh,0ah,"Fin: press any key..",0dh,0ah,"$" 
-    saut db 0dh,0ah,"$"
-    retour db 0dh,"$"
-    plus db " + $"
-    moins db " - $"
-    fois db " x $"
-    par db " / $"
-    egale db " = $"
+
+; "messageIntro", contient le nom des developpeurs de la calculatrice.
+messageIntro DB "Calculatrice developpee par Touzene Abderraouf & Abed ABdeldjalil", 0Dh, 0Ah, '$'
+
+;"Menu", affiche un menu a l'utilisateur et l'invite a choisir une operation : addition, soustraction, multiplication ou division.
+Menu db 0dh,0ah," Veuillez choisir l'operation � effectuer : ",0dh,0ah,"'+' pour l'addition ",0dh,0ah,"'-' pour la soustraction ",0dh,0ah,"'*' pour la multiplication",0dh,0ah,"'/' pour la devision.",0dh,0ah,"$"
+
+;"Num1" et "Num2", demandent a l'utilisateur d'entrer les deux nombres sur lesquels il souhaite effectuer l'op�ration selectionnee.
+Num1 db "Entrer le 1er nombre : $"
+Num2 db 0dh,0ah,"Enter le 2eme nombre : $" 
+
+;"Erreurmsg", est utilisee pour afficher un message d'erreur si quelque chose se passe mal pendant le calcul.
+Erreurmsg db 0dh,0ah,"Erreur ",0dh,0ah,"$"
+
+;"Resultatmsg", est utilisee pour afficher le resultat du calcul a l'utilisateur.
+Resultatmsg db 0dh,0ah,"Resultat : $"
+
+;"Finmsg", indique la fin du programme et invite l'utilisateur a appuyer sur n'importe quelle touche pour sortir.
+Finmsg db 0dh,0ah,"Fin: press any key..",0dh,0ah,"$" 
+
+;"saut", cree une rupture de ligne a des fins de mise en forme.
+saut db 0dh,0ah,"$"
+
+retour db 0dh,"$"
+plus db " + $"
+moins db " - $"
+fois db " x $"
+par db " / $"
+egale db " = $"
+
 data ends
 
 stack segment
@@ -29,8 +47,13 @@ start:
     mov ax,stack
     mov ss,ax
     
+    ; Affichage du message d'introduction
+    MOV AH, 9
+    LEA DX, messageIntro
+    INT 21h
+
     mov ah,9
-    mov dx,offset msg2
+    mov dx,offset Num1
     int 21h 
 
 Input10:    
@@ -40,7 +63,7 @@ Input10:
     push dx;    empiler le nombre lu (a)
     
     mov ah,9
-    mov dx,offset msg3
+    mov dx,offset Num2
     int 21h  
     
     mov cx,0;   avant chaque lecture
@@ -65,7 +88,7 @@ Input2:
 
 Operation:    
     mov ah,9
-    mov dx,offset msg
+    mov dx,offset Menu
     int 21h
      
     mov ah,1
@@ -85,7 +108,7 @@ Operation:
 
 erreur:
     mov ah,9
-    mov dx, offset msg4
+    mov dx, offset Erreurmsg
     int 21h
     jmp start
 
@@ -334,7 +357,7 @@ Division2:
              
 
 exit:
-    mov dx,offset msg6
+    mov dx,offset Finmsg
     mov ah,9
     int 21h 
     
@@ -487,15 +510,13 @@ ViewNo10 proc
     mov ah,2
     int 21h
     pop dx
-    pop ax
-    
+    pop ax    
     ret   
     
 ViewNo10 ENDP 
 
 
 view32_10 proc
-    
     push ax
     push bx
     push cx
@@ -531,7 +552,7 @@ view32_10 proc
     pop cx
     pop bx
     pop ax 
-    
+
     ret  
     
 view32_10 ENDP  
@@ -707,6 +728,7 @@ view32_2 proc
     ret  
     
 view32_2 ENDP  
+
 
     
 code ENDS
