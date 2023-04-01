@@ -72,19 +72,15 @@ erreur:
     jmp start
 
 Addition:
-    push ax;    Sauvegarder la contexte
-    push bx
-    push cx
-    push dx
-    push bp
+
     
     mov ah,9
     mov dx, offset retour
     int 21h  
 
     mov bp,sp    
-    mov bx,[bp+10]; bx=b
-    mov dx,[bp+12]; dx=a
+    mov bx,[bp]; bx=b
+    mov dx,[bp+2]; dx=a
     
     add dx,bx
     jo erreur;  En cas d'overflow
@@ -92,14 +88,14 @@ Addition:
  
 
     
-    mov dx,[bp+12] ;    Afficher a
+    mov dx,[bp+2] ;    Afficher a
     call AfficherNo10
     
     mov ah,9
     mov dx, offset plus;    Afficher +
     int 21h
     
-    mov dx,[bp+10] 
+    mov dx,[bp] 
     call AfficherNo10;    Afficher b 
         
     mov ah,9
@@ -112,11 +108,7 @@ Addition:
 
     call AfficherNo10; Afficher le resultat
     
-    pop bp ;    Restaurer le contexte
-    pop dx
-    pop cx
-    pop bx
-    pop ax
+
     jmp exit
     
 Soustraction:
