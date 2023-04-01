@@ -87,7 +87,7 @@ Addition:
     push dx;    Sauvegarder le resultat
  
 
-    
+Addition10:    
     mov dx,[bp+2] ;    Afficher a
     call AfficherNo10
     
@@ -102,14 +102,35 @@ Addition:
     mov dx, offset egale;   Afficher =
     int 21h 
     
-
-    
     pop dx ;    Recuperer a+b
 
     call AfficherNo10; Afficher le resultat
     
 
-    jmp exit
+    jmp exit 
+    
+
+;Addition2:    
+;    mov dx,[bp+2] ;    Afficher a
+;    call AfficherNo2
+;    
+;    mov ah,9
+;    mov dx, offset plus;    Afficher +
+;    int 21h
+;    
+;    mov dx,[bp] 
+;    call AfficherNo2;    Afficher b 
+;        
+;    mov ah,9
+;    mov dx, offset egale;   Afficher =
+;    int 21h 
+;    
+;    pop dx ;    Recuperer a+b
+;
+;    call AfficherNo2; Afficher le resultat
+;    
+;
+;    jmp exit
     
 Soustraction:
     push ax;    Sauvegarder la contexte
@@ -361,48 +382,49 @@ AfficherNo10 proc
     clc
     rol dx,1
     ror dx,1
-    jnc UnChiffre10
+    jnc AvantBoucle10
     neg dx
 
     push ax
+    push bx
     push dx    
     mov ah,2
     mov dx,"-"
     int 21h
-    pop dx
+    pop dx 
+    pop bx
     pop ax 
-        
-    UnChiffre10:
-        cmp dx,10
-        jae DeuxChiffres10
-        mov cx,1
-        jmp fin
-    DeuxChiffres10:
-        cmp dx,100
-        jae TroisChiffres10
-        mov cx,10
-        jmp fin
-    TroisChiffres10:
-        cmp dx,1000
-        jae QuatreChiffres10
-        mov cx,100
-        jmp fin 
-    QuatreChiffres10:  
-        cmp dx,10000
-        jae CinqeChiffres10
-        mov cx,1000
-        jmp fin
-         
-    CinqeChiffres10:
-        mov cx,10000
-        jmp fin
-        
-        
-    fin:
     
+    AvantBoucle10: 
+        push ax
+        push bx
+        mov ax,10  ;ax=10
+        mov bx,ax  ;bx=10  
+    Boucle10:
+        cmp dx,ax
+        jb fin     ;si dx<ax alors on arriver a un rang en plus  
+        cmp ax,10000
+        je fin5chiffres
+        push dx     
+        mul bx     ;sinon rang suivant 
+        pop dx 
+        jo fin
+        jmp Boucle10
+   
+    fin:    
+        push dx  
+                xor dx,dx
+        div bx     ;recuperer le vrai rang (rang en plus / 10)
+        pop dx 
+    fin5chiffres:
+        mov cx,ax 
+        pop bx     ; restaurer bx et ax
+        pop ax
         call View10 
          
-    ret
+    ret  
+    
+AfficherNo10 ENDP
       
 ViewNo10 proc 
     
