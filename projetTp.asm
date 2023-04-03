@@ -74,7 +74,9 @@ debut:
      
     ; Traitement en fonction de la base choisie
      
-    pop cx
+    pop cx  
+    cmp cl, "1"
+    je Input10
     CMP cl, '2'
     JE Input2
     CMP cl, '3'
