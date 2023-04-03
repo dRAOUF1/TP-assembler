@@ -11,6 +11,10 @@ Menu db 0dh,0ah," Veuillez choisir l'operation a effectuer : ",0dh,0ah,"'+' pour
 Num1 db "Entrer le 1er nombre : $"
 Num2 db 0dh,0ah,"Enter le 2eme nombre : $" 
 
+;"baseMsg", demandent a l'utilisateur d'entrer la base de l'opeartion
+baseMsg DB "Entrez la base de l'operation (2=binaire, h=hexadecimal, 1=decimal) : $"
+base DB 4 DUP('$')
+
 ;"Erreurmsg", est utilisee pour afficher un message d'erreur si quelque chose se passe mal pendant le calcul.
 Erreurmsg db 0dh,0ah,"Erreur ",0dh,0ah,"$"
 
@@ -18,10 +22,11 @@ Erreurmsg db 0dh,0ah,"Erreur ",0dh,0ah,"$"
 ;"Finmsg", indique la fin du programme et invite l'utilisateur a appuyer sur n'importe quelle touche pour sortir.
 Finmsg db 0dh,0ah,"Fin: press any key..",0dh,0ah,"$" 
 
-;"saut", cree une rupture de ligne a des fins de mise en forme.
+;"saut et retour", cree une rupture de ligne a des fins de mise en forme.
 saut db 0dh,0ah,"$"
-
 retour db 0dh,"$"
+
+;les operations
 plus db " + $"
 moins db " - $"
 fois db " x $"
@@ -48,13 +53,43 @@ start:
     ; Affichage du message d'introduction
     MOV AH, 9
     LEA DX, messageIntro
-    INT 21h
+    INT 21h 
 
+    ; Affichage du message de la base d'operation
+    MOV AH, 9
+    LEA DX, baseMsg
+    INT 21h
+    
+    ; Lecture de la base
+    MOV AH, 1 ; lecture d'un seul charactere
+    INT 21h
+    MOV BL, AL ; sauvgarde danc bl
+     
+    mov ah,9
+    mov dx, offset saut
+    int 21h
+    mov ah,9
+    mov dx, offset retour
+    int 21h 
+     
+    ; Traitement en fonction de la base choisie
+    CMP BL, '2'
+    JE Input2
+    CMP BL, '1'
+    JE Input10
+    ;CMP BL, 'h'
+    ;JE Input16
+    JMP erreur ; jump to error if the input is invalid
+    
+    
+    
+
+Input10:
+    ; Affichage du premier message  
     mov ah,9
     mov dx,offset Num1
-    int 21h 
-
-Input10:    
+    int 21h
+    
     mov cx,0;   Obligatoir avant chaque lecture
     call InputNo10 
     
@@ -70,6 +105,10 @@ Input10:
     jmp Operation
     
 Input2:
+    ; Affichage du premier message  
+    mov ah,9
+    mov dx,offset Num1
+    int 21h
     mov cx,0;   Obligatoir avant chaque lecture
     call InputNo2
     
@@ -84,6 +123,7 @@ Input2:
     push dx;    empiler le nombre lu (b)   
     jmp Operation
 
+
 Operation:    
     mov ah,9
     mov dx,offset Menu
@@ -92,17 +132,17 @@ Operation:
     mov ah,1
     int 21h
         
-    cmp al,2Bh;     addition
+    cmp al,2Bh  ;addition
     je Addition
     
     cmp al,2dh
-    je Soustraction 
+    je Soustraction ;Soustraction
     
-    cmp al,2Ah
-    je Multiplication  
+    cmp al,2Ah       
+    je Multiplication ;Multiplication 
     
     cmp al,2Fh
-    je Division
+    je Division ;Division
 
 erreur:
     mov ah,9
