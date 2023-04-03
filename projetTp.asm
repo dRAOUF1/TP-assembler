@@ -16,9 +16,11 @@ baseMsg DB "Entrez la base de l'operation :",0dh,0ah,"1-decimal",0dh,0ah,"2-bina
 base DB 4 DUP('$')
 
 ;"Erreurmsg", est utilisee pour afficher un message d'erreur si quelque chose se passe mal pendant le calcul.
-Erreurmsg db 0dh,0ah,"Erreur ",0dh,0ah,"$"
+ErreurInputMsg db 0dh,0ah,"Erreur:",0dh,0ah," Le nombre/chiffre entree est incorrect",0dh,0ah,"$"
 
-
+ErreurDiv0Msg db 0dh,0ah,"Erreur:",0dh,0ah,"Division par 0 impossible ",0dh,0ah,"$"
+                                                                                   
+ErreurOverFlowMsg db 0dh,0ah,"Erreur:",0dh,0ah,"OVERFLOW",0dh,0ah,"$"                                                                                   
 ;"Finmsg", indique la fin du programme et invite l'utilisateur a appuyer sur n'importe quelle touche pour sortir.
 Finmsg db 0dh,0ah,"Fin: press any key..",0dh,0ah,"$" 
 
@@ -55,7 +57,7 @@ start:
     MOV AH, 9
     LEA DX, messageIntro
     INT 21h 
-
+debut:
     ; Affichage du message de la base d'operation
     MOV AH, 9
     LEA DX, baseMsg
@@ -69,9 +71,6 @@ start:
     mov ah,9
     mov dx, offset saut
     int 21h
-    mov ah,9
-    mov dx, offset retour
-    int 21h 
      
     ; Traitement en fonction de la base choisie
      
@@ -80,7 +79,7 @@ start:
     JE Input2
     CMP cl, '3'
     JE Input16
-    JMP erreur ; jump to error if the input is invalid
+    JMP ErreurInput ; jump to error if the input is invalid
     
     
     
@@ -174,13 +173,27 @@ Operation:
     je Multiplication ;Multiplication 
     
     cmp al,2Fh
-    je Division ;Division
-
-erreur:
+    je Division ;Division   
+    
+    
+    ;Gestion d'erreur
+ErreurInput:
+    mov dx, offset ErreurInputMsg
     mov ah,9
-    mov dx, offset Erreurmsg
     int 21h
-    jmp start
+    jmp debut
+
+ErreurOverflow:
+    mov dx, offset ErreurOverFlowMsg
+    mov ah,9
+    int 21h
+    jmp debut 
+
+ErreurDiv0:
+    mov dx, offset ErreurDiv0Msg
+    mov ah,9
+    int 21h
+    jmp debut
 
 Addition:
 
@@ -194,7 +207,7 @@ Addition:
     mov dx,[bp+2]; dx=a
     
     add dx,bx
-    jo erreur;  En cas d'overflow
+    jo ErreurOverFlow;  En cas d'overflow
     push dx;    Sauvegarder le resultat 
     
     cmp cl,"2"
@@ -282,7 +295,7 @@ Soustraction:
       
     
     SUB dx,bx
-    jo erreur;  En cas d'overflow
+    jo ErreurOverFlow;  En cas d'overflow
     push dx;    Sauvegarder le resultat 
     
     cmp cl,"2"
@@ -459,11 +472,13 @@ Division:
 
     mov bp,sp  
     xor dx,dx  
-    mov bx,[bp]; bx=b  
+    mov bx,[bp]; bx=b 
+    
+    cmp bx,0
+    je ErreurDiv0 
     mov ax,[bp+2]; dx=a 
     
     div bx
-    jo erreur
     push ax 
     
     cmp cl,"2"
@@ -543,7 +558,7 @@ exit:
     mov ah,4ch
     int 21h 
     
-    
+   
     
     ;Debut des procedure
         
@@ -558,9 +573,9 @@ InputNo10 proc
     
     ;                 0<=al<=9
     cmp al,30h; 30h code asci 0
-    jb erreur
+    jb ErreurInput
     cmp al,39h; 39h code asci 9
-    ja erreur
+    ja ErreurInput
     
     sub ax,30h;     convertire en chiffre
     mov ah,0;       pour push la valeur lu correctement
@@ -577,11 +592,11 @@ FormNo10 proc
     
     push dx;    sauvegarder dx (modifier par mul)
     mul bx;     mettre la chiffre au bon rang
-    jo erreur
+    jo ErreurOverFlow
     pop dx;     restaurer dx 
     
     add dx,ax
-    jo erreur;  valeur entrer par l'utilisateur superieur a 7FFFh  
+    jo ErreurOverFlow;  valeur entrer par l'utilisateur superieur a 7FFFh  
     
     mov ax,bx;  enregister bx dans ax pour la multiplication apres
     mov bx,10
@@ -664,7 +679,7 @@ AfficherNo10 proc
    
     fin:    
         push dx  
-                xor dx,dx
+        xor dx,dx
         div bx     ;recuperer le vrai rang (rang en plus / 10)
         pop dx 
     fin5chiffres:
@@ -751,9 +766,9 @@ InputNo2 proc
     
     ;                 0<=al<=9
     cmp al,30h; 30h code asci 0
-    jb erreur
+    jb ErreurInput
     cmp al,31h; 39h code asci 9
-    ja erreur
+    ja ErreurInput
     
     sub ax,30h;     convertire en chiffre
     mov ah,0;       pour push la valeur lu correctement
@@ -770,11 +785,11 @@ FormNo2 proc
     
     push dx;    sauvegarder dx (modifier par mul)
     mul bx;     mettre la chiffre au bon rang
-    jo erreur
+    jo ErreurOverFlow
     pop dx;     restaurer dx 
     
     add dx,ax
-    jo erreur;  valeur entrer par l'utilisateur superieur a 7FFFh  
+    jo ErreurOverFlow;  valeur entrer par l'utilisateur superieur a 7FFFh  
     
     mov ax,bx;  enregister bx dans ax pour la multiplication apres
     mov bx,2
@@ -921,13 +936,13 @@ InputNo16 proc
     
     ;                 0<=al<=9
     cmp al,30h; 30h code asci 0
-    jb erreur
+    jb ErreurInput
     cmp al,39h
-    jbe Decimale
+    jbe ErreurInput
     cmp al,41h; 39h code asci 9
-    jb erreur
+    jb ErreurInput
     cmp al,46h
-    ja erreur 
+    ja ErreurInput 
     
     sub ax,37h
     jmp FinConvertion
@@ -949,11 +964,11 @@ FormNo16 proc
     
     push dx;    sauvegarder dx (modifier par mul)
     mul bx;     mettre la chiffre au bon rang
-    jo erreur
+    jo ErreurOverFlow
     pop dx;     restaurer dx 
     
     add dx,ax
-    jo erreur;  valeur entrer par l'utilisateur superieur a 7FFFh  
+    jo ErreurOverFlow;  valeur entrer par l'utilisateur superieur a 7FFFh  
     
     mov ax,bx;  enregister bx dans ax pour la multiplication apres
     mov bx,16
