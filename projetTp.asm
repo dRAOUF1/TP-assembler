@@ -12,7 +12,7 @@ Num1 db "Entrer le 1er nombre : $"
 Num2 db 0dh,0ah,"Enter le 2eme nombre : $" 
 
 ;"baseMsg", demandent a l'utilisateur d'entrer la base de l'opeartion
-baseMsg DB "Entrez la base de l'operation (2=binaire, h=hexadecimal, 1=decimal) : $"
+baseMsg DB "Entrez la base de l'operation :",0dh,0ah,"1-decimal",0dh,0ah,"2-binaire",0dh,0ah,"3-hexadecimal",0dh,0ah,"$"
 base DB 4 DUP('$')
 
 ;"Erreurmsg", est utilisee pour afficher un message d'erreur si quelque chose se passe mal pendant le calcul.
@@ -48,7 +48,8 @@ start:
     mov ds,ax
     
     mov ax,stack
-    mov ss,ax
+    mov ss,ax   
+    
     
     ; Affichage du message d'introduction
     MOV AH, 9
@@ -63,7 +64,7 @@ start:
     ; Lecture de la base
     MOV AH, 1 ; lecture d'un seul charactere
     INT 21h
-    MOV BL, AL ; sauvgarde danc bl
+    push ax
      
     mov ah,9
     mov dx, offset saut
@@ -73,12 +74,12 @@ start:
     int 21h 
      
     ; Traitement en fonction de la base choisie
-    CMP BL, '2'
+     
+    pop cx
+    CMP cl, '2'
     JE Input2
-    CMP BL, '1'
-    JE Input10
-    ;CMP BL, 'h'
-    ;JE Input16
+    CMP cl, '3'
+    JE Input16
     JMP erreur ; jump to error if the input is invalid
     
     
@@ -90,6 +91,7 @@ Input10:
     mov dx,offset Num1
     int 21h
     
+    push cx
     mov cx,0;   Obligatoir avant chaque lecture
     call InputNo10 
     
@@ -99,9 +101,12 @@ Input10:
     mov dx,offset Num2
     int 21h  
     
+    push cx
     mov cx,0;   avant chaque lecture
-    call InputNo10
-    push dx;    empiler le nombre lu (b)   
+    call InputNo10 
+    pop cx
+    push dx;    empiler le nombre lu (b) 
+      
     jmp Operation
     
 Input2:
@@ -109,8 +114,11 @@ Input2:
     mov ah,9
     mov dx,offset Num1
     int 21h
+     
+    push cx
     mov cx,0;   Obligatoir avant chaque lecture
-    call InputNo2
+    call InputNo2  
+    pop cx
     
     push dx;    empiler le nombre lu (a)
     
@@ -118,19 +126,43 @@ Input2:
     mov dx,offset Num2
     int 21h  
     
+    push cx
     mov cx,0;   avant chaque lecture
-    call InputNo2 
-    push dx;    empiler le nombre lu (b)   
+    call InputNo2
+    pop cx 
+    push dx;    empiler le nombre lu (b)  
+     
     jmp Operation
 
-
+Input16: 
+        ; Affichage du premier message  
+    mov ah,9
+    mov dx,offset Num1
+    int 21h 
+    
+    push cx
+    mov cx,0;   Obligatoir avant chaque lecture
+    call InputNo16
+    pop cx
+    push dx;    empiler le nombre lu (a)
+    
+    mov ah,9
+    mov dx,offset Num2
+    int 21h  
+    
+    push cx
+    mov cx,0;   avant chaque lecture
+    call InputNo16  
+    pop cx
+    push dx;    empiler le nombre lu (b) 
+    
 Operation:    
     mov ah,9
     mov dx,offset Menu
     int 21h
      
     mov ah,1
-    int 21h
+    int 21h 
         
     cmp al,2Bh  ;addition
     je Addition
@@ -164,6 +196,11 @@ Addition:
     add dx,bx
     jo erreur;  En cas d'overflow
     push dx;    Sauvegarder le resultat 
+    
+    cmp cl,"2"
+    je Addition2
+    cmp cl,"3"
+    je Addition16
 
 
 Addition10:    
@@ -246,7 +283,12 @@ Soustraction:
     
     SUB dx,bx
     jo erreur;  En cas d'overflow
-    push dx;    Sauvegarder le resultat
+    push dx;    Sauvegarder le resultat 
+    
+    cmp cl,"2"
+    je Soustraction2
+    cmp cl,"3"
+    je Soustraction16
     
 Soustraction10:
     
@@ -298,7 +340,7 @@ Soustraction2:
 Soustraction16:
         
     mov dx,[bp+2] ;    Afficher a
-    call AfficherNo2
+    call AfficherNo16
     
     mov ah,9
     mov dx, offset moins;    Afficher -
@@ -333,7 +375,12 @@ Multiplication:
     mul bx
    
     push ax;    Sauvegarder le resultat  
-    push dx
+    push dx 
+    
+    cmp cl,"2"
+    je Multiplication2
+    cmp cl,"3"
+    je Multiplication16
 
 Multiplication10:
     
@@ -412,12 +459,17 @@ Division:
 
     mov bp,sp  
     xor dx,dx  
-    mov bx,[bp]; bx=b
+    mov bx,[bp]; bx=b  
     mov ax,[bp+2]; dx=a 
     
     div bx
     jo erreur
-    push ax
+    push ax 
+    
+    cmp cl,"2"
+    je Division2
+    cmp cl,"3"
+    je Division16
 
 Division10:  
     
