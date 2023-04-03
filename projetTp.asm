@@ -91,7 +91,7 @@ Input10:
     int 21h
     
     mov cx,0;   Obligatoir avant chaque lecture
-    call InputNo10 
+    call InputNo16 
     
     push dx;    empiler le nombre lu (a)
     
@@ -100,7 +100,7 @@ Input10:
     int 21h  
     
     mov cx,0;   avant chaque lecture
-    call InputNo10 
+    call InputNo16
     push dx;    empiler le nombre lu (b)   
     jmp Operation
     
@@ -163,7 +163,7 @@ Addition:
     
     add dx,bx
     jo erreur;  En cas d'overflow
-    push dx;    Sauvegarder le resultat
+    push dx;    Sauvegarder le resultat 
 
 
 Addition10:    
@@ -207,6 +207,28 @@ Addition2:
     pop dx ;    Recuperer a+b
 
     call AfficherNo2; Afficher le resultat
+    
+
+    jmp exit 
+
+Addition16:    
+    mov dx,[bp+2] ;    Afficher a
+    call AfficherNo16
+    
+    mov ah,9
+    mov dx, offset plus;    Afficher +
+    int 21h
+    
+    mov dx,[bp] 
+    call AfficherNo16;    Afficher b 
+        
+    mov ah,9
+    mov dx, offset egale;   Afficher =
+    int 21h 
+    
+    pop dx ;    Recuperer a+b
+
+    call AfficherNo16; Afficher le resultat
     
 
     jmp exit
@@ -471,7 +493,7 @@ View10 proc
                 mov ax,dx
                 mov dx,0
                 div cx
-                call ViewNo10
+                call ViewNo
                 mov bx,dx
                 mov dx,0
                 mov ax,cx
@@ -539,19 +561,25 @@ AfficherNo10 proc
     
 AfficherNo10 ENDP
       
-ViewNo10 proc 
+ViewNo proc 
     
     push ax
     push dx
     mov dx,ax
+    cmp dx,9
+    ja  ViewNo16
     add dl,30h
-    mov ah,2
-    int 21h
-    pop dx
-    pop ax    
+    jmp FinView
+    ViewNo16:
+        add dl,37h
+    FinView:
+        mov ah,2
+        int 21h
+        pop dx
+        pop ax    
     ret   
     
-ViewNo10 ENDP 
+ViewNo ENDP 
 
 
 view32_10 proc
@@ -706,7 +734,7 @@ View2 proc
                 mov ax,dx
                 mov dx,0
                 div cx
-                call ViewNo10
+                call ViewNo
                 mov bx,dx
                 mov dx,0
                 mov ax,cx
@@ -768,7 +796,143 @@ view32_2 proc
 view32_2 ENDP  
 
 
+InputNo16 proc
+    mov ah,01
+    int 21h
     
+    mov dx,0
+    mov bx,1;       initialiser bx avant de former le nombre 
+    cmp al,0dh;     enter key
+    je FormNo16
+    
+    ;                 0<=al<=9
+    cmp al,30h; 30h code asci 0
+    jb erreur
+    cmp al,39h
+    jbe Decimale
+    cmp al,41h; 39h code asci 9
+    jb erreur
+    cmp al,46h
+    ja erreur 
+    
+    sub ax,37h
+    jmp FinConvertion
+    
+    Decimale:
+        sub ax,30h;     convertire en chiffre        
+    FinConvertion:
+        mov ah,0;       pour push la valeur lu correctement
+        push ax
+        inc cx;         le nombre de chiffres du nombre lu 
+        
+        jmp InputNo16
+    ret  
+    
+InputNo16 ENDP  
+
+FormNo16 proc
+    pop ax       
+    
+    push dx;    sauvegarder dx (modifier par mul)
+    mul bx;     mettre la chiffre au bon rang
+    jo erreur
+    pop dx;     restaurer dx 
+    
+    add dx,ax
+    jo erreur;  valeur entrer par l'utilisateur superieur a 7FFFh  
+    
+    mov ax,bx;  enregister bx dans ax pour la multiplication apres
+    mov bx,16
+    push dx
+    mul bx;     pour avancer au rang suivant (ax=bx*10)
+    pop dx
+    mov bx,ax;  recuperer le nouveau bx 
+    
+    dec cx;     decrementer le compteur de chiffre du nombre
+    cmp cx,0;   si le nombre de chiffre restant est superieur a 0 on refait l'operation
+    ja FormNo16
+    
+    ret ;       sinon return  
+    
+FormNo16 ENDP
+
+AfficherNo16 proc 
+    
+    clc
+    rol dx,1
+    ror dx,1
+    jnc AvantBoucle16
+    neg dx
+
+    push ax
+    push bx
+    push dx    
+    mov ah,2
+    mov dx,"-"
+    int 21h
+    pop dx 
+    pop bx
+    pop ax 
+
+    AvantBoucle16: 
+        push ax
+        push bx
+        mov ax,16  ;ax=16
+        mov bx,ax  ;bx=16 
+    Boucle16:
+        cmp dx,ax
+        jb fin16     ;si dx<ax alors on arriver a un rang en plus  
+        cmp ax,1000h
+        je fin4chiffres
+        push dx     
+        mul bx     ;sinon rang suivant 
+        pop dx
+        jmp Boucle16
+   
+    fin16:    
+        push dx  
+                xor dx,dx
+        div bx     ;recuperer le vrai rang (rang en plus / 10)
+        pop dx 
+    fin4chiffres:
+        mov cx,ax 
+        pop bx     ; restaurer bx et ax
+        pop ax
+        call View16 
+         
+    ret  
+    
+AfficherNo16 ENDP 
+
+View16 proc
+    push ax
+    push bx
+    push cx
+    push dx 
+    
+    finSauvgarde16:
+                mov ax,dx
+                mov dx,0
+                div cx
+                call ViewNo
+                mov bx,dx
+                mov dx,0
+                mov ax,cx
+                mov cx,16
+                div cx
+                mov dx,bx
+                mov cx,ax
+                cmp ax,0  
+                jne finSauvgarde16 
+    pop dx
+    pop cx
+    pop bx 
+    pop ax
+
+    ret
+    
+View16 ENDP  
+   
 code ENDS
 
     
