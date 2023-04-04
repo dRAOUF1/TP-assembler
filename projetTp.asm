@@ -175,13 +175,7 @@ Addition:
     jo ErreurOverFlow;  En cas d'overflow
     push dx;    Sauvegarder le resultat 
     
-    cmp cl,"2"
-    je Addition2
-    cmp cl,"3"
-    je Addition16
 
-
-Addition10: 
     mov dx ,0   
     mov ax,[bp+2] ;    Afficher a
     call view32
@@ -206,55 +200,6 @@ Addition10:
 
     jmp exit 
     
-
-Addition2:
-    mov dx,0    
-    mov ax,[bp+2] ;    Afficher a
-    call view32
-    
-    mov ah,9
-    mov dx, offset plus;    Afficher +
-    int 21h
-    
-    mov dx,0
-    mov ax,[bp] 
-    call view32;    Afficher b 
-        
-    mov ah,9
-    mov dx, offset egale;   Afficher =
-    int 21h 
-    
-    pop ax ;    Recuperer a+b
-    mov dx,0
-    call view32; Afficher le resultat
-    
-
-    jmp exit 
-
-Addition16:
-    mov dx,0    
-    mov ax,[bp+2] ;    Afficher a
-    call view32
-    
-    mov ah,9
-    mov dx, offset plus;    Afficher +
-    int 21h
-    
-    mov dx,0
-    mov ax,[bp] 
-    call view32;    Afficher b 
-        
-    mov ah,9
-    mov dx, offset egale;   Afficher =
-    int 21h 
-    
-    pop ax ;    Recuperer a+b
-    mov dx,0
-    call view32; Afficher le resultat
-    
-
-    jmp exit
-    
 Soustraction:
 
     mov ah,9
@@ -270,13 +215,8 @@ Soustraction:
     jo ErreurOverFlow;  En cas d'overflow
     push dx;    Sauvegarder le resultat 
     
-    cmp cl,"2"
-    je Soustraction2
-    cmp cl,"3"
-    je Soustraction16
-    
-Soustraction10:
-    
+
+
     mov ax,[bp+2] ;    Afficher a  
     mov dx,0
     call view32
@@ -300,59 +240,7 @@ Soustraction10:
     call view32; Afficher le resultat
     jmp exit
     
-Soustraction2:
-        
-    mov ax,[bp+2] ;    Afficher a
-    mov dx,0
-    call view32
-    
-    mov ah,9
-    mov dx, offset moins;    Afficher -
-    int 21h
-    
-    mov ax,[bp] 
-    mov dx,0
-    call view32;    Afficher b 
-        
-    mov ah,9
-    mov dx, offset egale;   Afficher =
-    int 21h 
-    
 
-    
-    pop ax ;    Recuperer a-b
-    mov dx,0
-
-    call view32; Afficher le resultat
-
-    jmp exit  
-    
-Soustraction16:
-        
-    mov ax,[bp+2] ;    Afficher a
-    mov dx,0
-    call view32
-    
-    mov ah,9
-    mov dx, offset moins;    Afficher -
-    int 21h
-    
-    mov ax,[bp]      
-    mov dx,0
-    call view32;    Afficher b 
-        
-    mov ah,9
-    mov dx, offset egale;   Afficher =
-    int 21h 
-    
-
-    
-    pop ax ;    Recuperer a-b  
-    mov dx,0
-
-    call view32; Afficher le resultat
-
-    jmp exit
 
 Multiplication:
     
@@ -370,12 +258,6 @@ Multiplication:
     push ax;    Sauvegarder le resultat  
     push dx 
     
-    cmp cl,"2"
-    je Multiplication2
-    cmp cl,"3"
-    je Multiplication16
-
-Multiplication10:
     
     mov dx,0
     mov ax,[bp+2] ;    Afficher a
@@ -401,56 +283,6 @@ Multiplication10:
     jmp exit
 
 
-Multiplication2: 
-    
-    mov dx,0
-    mov ax,[bp+2] ;    Afficher a
-    call view32
-    
-    mov ah,9
-    mov dx, offset fois;    Afficher x
-    int 21h
-            
-    mov dx,0
-    mov ax,[bp] 
-    call view32;    Afficher b 
-        
-    mov ah,9
-    mov dx, offset egale;   Afficher =
-    int 21h 
-    
-    pop dx ;    Recuperer la 1ere partie de axb       
-    pop ax
-    
-
-    call view32; Afficher le resultat 
-    jmp exit 
-
-Multiplication16: 
-    
-    mov dx,0
-    mov ax,[bp+2] ;    Afficher a
-    call view32
-    
-    mov ah,9
-    mov dx, offset fois;    Afficher x
-    int 21h
-    
-    mov dx,0
-    mov ax,[bp] 
-    call view32;    Afficher b 
-        
-    mov ah,9
-    mov dx, offset egale;   Afficher =
-    int 21h 
-    
-    pop dx ;    Recuperer la 1ere partie de axb       
-    pop ax
-    
-
-    call view32; Afficher le resultat 
-    jmp exit
-
 Division:
 
     
@@ -468,13 +300,7 @@ Division:
     
     div bx
     push ax 
-    
-    cmp cl,"2"
-    je Division2
-    cmp cl,"3"
-    je Division16
-
-Division10:  
+      
     
     mov dx,0
     mov ax,[bp+2] ;    Afficher a
@@ -497,49 +323,7 @@ Division10:
     call view32 
    
     jmp exit  
-
-Division2: 
-    mov dx,0
-    mov ax,[bp+2] ;    Afficher a
-    call view32
-    
-    mov ah,9
-    mov dx, offset par;    Afficher /
-    int 21h
-    
-    mov dx,[bp] 
-    call view32;    Afficher b 
-        
-    mov ah,9
-    mov dx, offset egale;   Afficher =
-    int 21h 
-    
-    pop dx ;    Recuperer  a/b       
-    call view32 
-   
-    jmp exit 
-    
-Division16:
-    mov dx,[bp+2] ;    Afficher a
-    call view32
-    
-    mov ah,9
-    mov dx, offset par;    Afficher /
-    int 21h
-           
-    mov dx,0
-    mov ax,[bp] 
-    call view32;    Afficher b 
-        
-    mov ah,9
-    mov dx, offset egale;   Afficher =
-    int 21h 
-    
-    pop ax ;    Recuperer  a/b 
-    mov dx,0      
-    call view32 
-   
-    jmp exit              
+            
 
 exit:
     mov dx,offset Finmsg
@@ -563,7 +347,7 @@ InputNo proc
     mov dx,0
     mov bx,1;       initialiser bx avant de former le nombre 
     cmp al,0dh;     enter key
-    je FormNo10 
+    je FormNo 
      
     ;Dans toute les bases 0<=al<='F'
     cmp al,30h; 30h code asci 0
@@ -615,7 +399,7 @@ InputNo proc
         jmp InputNo
      
     
-    FormNo10:
+    FormNo:
         pop ax       
         
         push dx;    sauvegarder dx (modifier par mul)
@@ -635,7 +419,7 @@ InputNo proc
         
         dec cx;     decrementer le compteur de chiffre du nombre
         cmp cx,0;   si le nombre de chiffre restant est superieur a 0 on refait l'operation
-        ja FormNo10 
+        ja FormNo 
     
     ret
     
