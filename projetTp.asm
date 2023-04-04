@@ -65,7 +65,12 @@ debut:
     
     ; Lecture de la base
     MOV AH, 1 ; lecture d'un seul charactere
+<<<<<<< Updated upstream
     INT 21h
+=======
+    INT 21h 
+    mov ah,0
+>>>>>>> Stashed changes
     push ax
      
     mov ah,9
@@ -74,6 +79,7 @@ debut:
      
     ; Traitement en fonction de la base choisie
      
+<<<<<<< Updated upstream
     pop cx  
     cmp cl, "1"
     je Input10
@@ -83,10 +89,30 @@ debut:
     JE Input16
     JMP ErreurInput ; jump to error if the input is invalid
     
+=======
+    pop si  
+    cmp si, "1"
+    je Input10
+    CMP si, '2'
+    JE Input2
+    CMP si, '3'
+    JE Input16
+    JMP ErreurInput ; jump to error if the input is invalid
+>>>>>>> Stashed changes
     
+    Input10:
+        mov si,10
+        jmp Input
+    Input2:
+        mov si,2
+        jmp Input
+    Input16:
+        mov si,10h
+
     
 
-Input10:
+Input: 
+    
     ; Affichage du premier message  
     mov ah,9
     mov dx,offset Num1
@@ -108,6 +134,7 @@ Input10:
     pop cx
     push dx;    empiler le nombre lu (b) 
       
+<<<<<<< Updated upstream
     jmp Operation
     
 Input2:
@@ -156,6 +183,9 @@ Input16:
     call InputNo16  
     pop cx
     push dx;    empiler le nombre lu (b) 
+=======
+
+>>>>>>> Stashed changes
     
 Operation:    
     mov ah,9
@@ -600,24 +630,90 @@ InputNo10 proc
     mov dx,0
     mov bx,1;       initialiser bx avant de former le nombre 
     cmp al,0dh;     enter key
-    je FormNo10
-    
-    ;                 0<=al<=9
+    je FormNo10 
+     
+    ;Dans toute les bases 0<=al<='F'
     cmp al,30h; 30h code asci 0
     jb ErreurInput
+<<<<<<< Updated upstream
     cmp al,39h; 39h code asci 9
     ja ErreurInput
+=======
+    cmp al,46h; 46h code asci de F
+    ja ErreurInput
+     
+    ;Trouver la bonne base
+    cmp si,10
+    je Decimale
+    cmp si,2
+    je Bin 
+>>>>>>> Stashed changes
     
-    sub ax,30h;     convertire en chiffre
-    mov ah,0;       pour push la valeur lu correctement
-    push ax
-    inc cx;         le nombre de chiffres du nombre lu 
+    ;HEXA
+
+    cmp al,39h
+    jbe Decimale
+    cmp al,41h; 39h code asci 9
+    jb ErreurInput
+ 
     
-    jmp InputNo10
-    ret  
+    sub ax,37h
+    jmp FinConvertion
+    
+    ;DEC
+    ;                 0<=al<=9 
+    Decimale:
+        cmp al,30h; 30h code asci 0
+        jb ErreurInput
+        cmp al,39h; 39h code asci 9
+        ja ErreurInput  
+        sub ax,30h;     convertire en chiffre
+        jmp FinConvertion 
+    
+    ;BIN 
+    Bin:
+        cmp al,30h
+        jb ErreurInput
+        cmp al, 31h
+        ja ErreurInput
+    
+        sub ax,30h;     convertire en chiffre
+    
+    FinConvertion:
+        mov ah,0;       pour push la valeur lu correctement
+        push ax
+        inc cx;         le nombre de chiffres du nombre lu 
+        
+        jmp InputNo10
+     
+    
+    FormNo10:
+        pop ax       
+        
+        push dx;    sauvegarder dx (modifier par mul)
+        mul bx;     mettre la chiffre au bon rang
+        jo ErreurOverFlow
+        pop dx;     restaurer dx 
+        
+        add dx,ax
+        jo ErreurOverFlow;  valeur entrer par l'utilisateur superieur a 7FFFh  
+        
+        mov ax,bx;  enregister bx dans ax pour la multiplication apres
+        mov bx,si
+        push dx
+        mul bx;     pour avancer au rang suivant (ax=bx*10)
+        pop dx
+        mov bx,ax;  recuperer le nouveau bx 
+        
+        dec cx;     decrementer le compteur de chiffre du nombre
+        cmp cx,0;   si le nombre de chiffre restant est superieur a 0 on refait l'operation
+        ja FormNo10 
+    
+    ret
     
 InputNo10 ENDP
     
+<<<<<<< Updated upstream
 FormNo10 proc
     pop ax       
     
@@ -646,6 +742,8 @@ FormNo10 ENDP
 
 
 
+=======
+>>>>>>> Stashed changes
       
 ViewNo proc 
     
@@ -724,6 +822,7 @@ view32_10 proc
 view32_10 ENDP  
 
 
+<<<<<<< Updated upstream
 
 InputNo2 proc
     mov ah,01
@@ -778,6 +877,8 @@ FormNo2 ENDP
 
 
 
+=======
+>>>>>>> Stashed changes
 view32_2 proc
     
     push ax
@@ -820,6 +921,7 @@ view32_2 proc
 view32_2 ENDP  
 
 
+<<<<<<< Updated upstream
 InputNo16 proc
     mov ah,01
     int 21h
@@ -884,6 +986,13 @@ FormNo16 ENDP
 
 view32_16 proc
     
+=======
+
+ 
+
+view32_16 proc
+    
+>>>>>>> Stashed changes
     push ax
     push bx
     push cx
