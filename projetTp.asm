@@ -104,7 +104,7 @@ Input:
     
     push cx
     mov cx,0;   Obligatoir avant chaque lecture
-    call InputNo10 
+    call InputNo 
     
     push dx;    empiler le nombre lu (a)
     
@@ -114,7 +114,7 @@ Input:
     
     push cx
     mov cx,0;   avant chaque lecture
-    call InputNo10 
+    call InputNo 
     pop cx
     push dx;    empiler le nombre lu (b) 
       
@@ -184,7 +184,7 @@ Addition:
 Addition10: 
     mov dx ,0   
     mov ax,[bp+2] ;    Afficher a
-    call view32_10
+    call view32
     
     mov ah,9
     mov dx, offset plus;    Afficher +
@@ -192,7 +192,7 @@ Addition10:
     
     mov dx,0
     mov ax,[bp] 
-    call view32_10;    Afficher b 
+    call view32;    Afficher b 
         
     mov ah,9
     mov dx, offset egale;   Afficher =
@@ -201,7 +201,7 @@ Addition10:
     pop ax ;    Recuperer a+b  
     mov dx,0
 
-    call view32_10; Afficher le resultat
+    call view32; Afficher le resultat
     
 
     jmp exit 
@@ -210,7 +210,7 @@ Addition10:
 Addition2:
     mov dx,0    
     mov ax,[bp+2] ;    Afficher a
-    call view32_2
+    call view32
     
     mov ah,9
     mov dx, offset plus;    Afficher +
@@ -218,7 +218,7 @@ Addition2:
     
     mov dx,0
     mov ax,[bp] 
-    call view32_2;    Afficher b 
+    call view32;    Afficher b 
         
     mov ah,9
     mov dx, offset egale;   Afficher =
@@ -226,7 +226,7 @@ Addition2:
     
     pop ax ;    Recuperer a+b
     mov dx,0
-    call view32_2; Afficher le resultat
+    call view32; Afficher le resultat
     
 
     jmp exit 
@@ -234,7 +234,7 @@ Addition2:
 Addition16:
     mov dx,0    
     mov ax,[bp+2] ;    Afficher a
-    call view32_16
+    call view32
     
     mov ah,9
     mov dx, offset plus;    Afficher +
@@ -242,7 +242,7 @@ Addition16:
     
     mov dx,0
     mov ax,[bp] 
-    call view32_16;    Afficher b 
+    call view32;    Afficher b 
         
     mov ah,9
     mov dx, offset egale;   Afficher =
@@ -250,7 +250,7 @@ Addition16:
     
     pop ax ;    Recuperer a+b
     mov dx,0
-    call view32_16; Afficher le resultat
+    call view32; Afficher le resultat
     
 
     jmp exit
@@ -279,7 +279,7 @@ Soustraction10:
     
     mov ax,[bp+2] ;    Afficher a  
     mov dx,0
-    call view32_10
+    call view32
     
     mov ah,9
     mov dx, offset moins;    Afficher -
@@ -287,7 +287,7 @@ Soustraction10:
     
     mov ax,[bp]
     mov dx,0 
-    call view32_10;    Afficher b 
+    call view32;    Afficher b 
         
     mov ah,9
     mov dx, offset egale;   Afficher =
@@ -297,14 +297,14 @@ Soustraction10:
     
     pop ax ;    Recuperer a-b
     mov dx,0
-    call view32_10; Afficher le resultat
+    call view32; Afficher le resultat
     jmp exit
     
 Soustraction2:
         
     mov ax,[bp+2] ;    Afficher a
     mov dx,0
-    call view32_2
+    call view32
     
     mov ah,9
     mov dx, offset moins;    Afficher -
@@ -312,7 +312,7 @@ Soustraction2:
     
     mov ax,[bp] 
     mov dx,0
-    call view32_2;    Afficher b 
+    call view32;    Afficher b 
         
     mov ah,9
     mov dx, offset egale;   Afficher =
@@ -323,7 +323,7 @@ Soustraction2:
     pop ax ;    Recuperer a-b
     mov dx,0
 
-    call view32_2; Afficher le resultat
+    call view32; Afficher le resultat
 
     jmp exit  
     
@@ -331,7 +331,7 @@ Soustraction16:
         
     mov ax,[bp+2] ;    Afficher a
     mov dx,0
-    call view32_16
+    call view32
     
     mov ah,9
     mov dx, offset moins;    Afficher -
@@ -339,7 +339,7 @@ Soustraction16:
     
     mov ax,[bp]      
     mov dx,0
-    call view32_16;    Afficher b 
+    call view32;    Afficher b 
         
     mov ah,9
     mov dx, offset egale;   Afficher =
@@ -350,7 +350,7 @@ Soustraction16:
     pop ax ;    Recuperer a-b  
     mov dx,0
 
-    call view32_16; Afficher le resultat
+    call view32; Afficher le resultat
 
     jmp exit
 
@@ -379,7 +379,7 @@ Multiplication10:
     
     mov dx,0
     mov ax,[bp+2] ;    Afficher a
-    call view32_10
+    call view32
     
     mov ah,9
     mov dx, offset fois;    Afficher x
@@ -387,7 +387,7 @@ Multiplication10:
     
     mov dx,0
     mov ax,[bp] 
-    call view32_10;    Afficher b 
+    call view32;    Afficher b 
         
     mov ah,9
     mov dx, offset egale;   Afficher =
@@ -397,7 +397,7 @@ Multiplication10:
     pop ax ;    Recuperer la 2eme partie de axb 
 
 
-    call view32_10; Afficher le resultat 
+    call view32; Afficher le resultat 
     jmp exit
 
 
@@ -405,7 +405,7 @@ Multiplication2:
     
     mov dx,0
     mov ax,[bp+2] ;    Afficher a
-    call view32_2
+    call view32
     
     mov ah,9
     mov dx, offset fois;    Afficher x
@@ -413,7 +413,7 @@ Multiplication2:
             
     mov dx,0
     mov ax,[bp] 
-    call view32_2;    Afficher b 
+    call view32;    Afficher b 
         
     mov ah,9
     mov dx, offset egale;   Afficher =
@@ -423,14 +423,14 @@ Multiplication2:
     pop ax
     
 
-    call view32_2; Afficher le resultat 
+    call view32; Afficher le resultat 
     jmp exit 
 
 Multiplication16: 
     
     mov dx,0
     mov ax,[bp+2] ;    Afficher a
-    call view32_16
+    call view32
     
     mov ah,9
     mov dx, offset fois;    Afficher x
@@ -438,7 +438,7 @@ Multiplication16:
     
     mov dx,0
     mov ax,[bp] 
-    call view32_16;    Afficher b 
+    call view32;    Afficher b 
         
     mov ah,9
     mov dx, offset egale;   Afficher =
@@ -448,7 +448,7 @@ Multiplication16:
     pop ax
     
 
-    call view32_16; Afficher le resultat 
+    call view32; Afficher le resultat 
     jmp exit
 
 Division:
@@ -478,7 +478,7 @@ Division10:
     
     mov dx,0
     mov ax,[bp+2] ;    Afficher a
-    call view32_10
+    call view32
     
     mov ah,9
     mov dx, offset par;    Afficher /
@@ -486,7 +486,7 @@ Division10:
     
     mov dx,0
     mov ax,[bp] 
-    call view32_10;    Afficher b 
+    call view32;    Afficher b 
         
     mov ah,9
     mov dx, offset egale;   Afficher =
@@ -494,34 +494,34 @@ Division10:
     
     pop ax ;    Recuperer  a/b 
     mov dx,0      
-    call view32_10 
+    call view32 
    
     jmp exit  
 
 Division2: 
     mov dx,0
     mov ax,[bp+2] ;    Afficher a
-    call view32_2
+    call view32
     
     mov ah,9
     mov dx, offset par;    Afficher /
     int 21h
     
     mov dx,[bp] 
-    call view32_2;    Afficher b 
+    call view32;    Afficher b 
         
     mov ah,9
     mov dx, offset egale;   Afficher =
     int 21h 
     
     pop dx ;    Recuperer  a/b       
-    call view32_2 
+    call view32 
    
     jmp exit 
     
 Division16:
     mov dx,[bp+2] ;    Afficher a
-    call view32_16
+    call view32
     
     mov ah,9
     mov dx, offset par;    Afficher /
@@ -529,7 +529,7 @@ Division16:
            
     mov dx,0
     mov ax,[bp] 
-    call view32_16;    Afficher b 
+    call view32;    Afficher b 
         
     mov ah,9
     mov dx, offset egale;   Afficher =
@@ -537,7 +537,7 @@ Division16:
     
     pop ax ;    Recuperer  a/b 
     mov dx,0      
-    call view32_16 
+    call view32 
    
     jmp exit              
 
@@ -556,7 +556,7 @@ exit:
     
     ;Debut des procedure
         
-InputNo10 proc
+InputNo proc
     mov ah,01
     int 21h
     
@@ -612,7 +612,7 @@ InputNo10 proc
         push ax
         inc cx;         le nombre de chiffres du nombre lu 
         
-        jmp InputNo10
+        jmp InputNo
      
     
     FormNo10:
@@ -639,7 +639,7 @@ InputNo10 proc
     
     ret
     
-InputNo10 ENDP
+InputNo ENDP
     
       
 ViewNo proc 
@@ -663,13 +663,13 @@ ViewNo proc
 ViewNo ENDP 
 
 
-view32_10 proc
+view32 proc
     push ax
     push bx
     push cx
     push dx
     
-    mov bx,10 ;Constante 10 stockee dans BX
+    mov bx,si ;Constante 10 stockee dans BX
     push bx ;bx est constant donc on peut l'utiliser comme marqueur pour sortir de la boucle            
     
     ;Verfier si le nombre est negatif
@@ -716,94 +716,10 @@ view32_10 proc
 
     ret  
     
-view32_10 ENDP  
-
-
-view32_2 proc
-    
-    push ax
-    push bx
-    push cx
-    push dx
-    
-    mov bx,2 ;Constante 10 stockee dans BX
-    push bx ;bx est constant donc on peut l'utiliser comme marqueur pour sortir de la boucle            
-    
-    diviser2: 
-        mov cx,ax ;Stocke temporairement le partie bassse dans CX
-        mov ax,dx ;Stocke temporairement le partie bassse dans AX
-        
-        xor dx,dx ;DX=0 pour la division DX:AX / BX
-        div bx ; AX est le quotient haut, le reste est utilise dans la prochaine division
-        xchg ax,cx ;Deplace le quotient de la partie haute dans CX et la partie basse(quotient) dans AX 
-        div bx ; AX est le quotient bas, le reste est dans DX=[0,9]
-        push dx ;Sauvegarde le reste 
-        mov dx,cx ;Deplacer le quotient de la partie haute dans DX
-        or cx,ax ;=0 uniquement si cx=0 et ax=0 (quotient de la partie haute et celui de la partie basse =0)
-        jnz diviser2 ;Si !=0 boucler
-        pop dx ;Recuperer l'unite
-    
-    afficher2: 
-        mov ax,dx
-        call ViewNo 
-        pop dx ;Recupere le prochain rang
-        cmp dx,bx ;SI dx=10 alors on est arrive a la fin (le bx empiler au debut)
-        jb afficher2 
-             
-    
-    pop dx
-    pop cx
-    pop bx
-    pop ax 
-    
-    ret  
-    
-view32_2 ENDP  
-
+view32 ENDP  
 
 
  
-
-view32_16 proc
-    
-    push ax
-    push bx
-    push cx
-    push dx
-    
-    mov bx,10h ;Constante 10 stockee dans BX
-    push bx ;bx est constant donc on peut l'utiliser comme marqueur pour sortir de la boucle            
-    
-    diviser16: 
-        mov cx,ax ;Stocke temporairement le partie bassse dans CX
-        mov ax,dx ;Stocke temporairement le partie bassse dans AX
-        
-        xor dx,dx ;DX=0 pour la division DX:AX / BX
-        div bx ; AX est le quotient haut, le reste est utilise dans la prochaine division
-        xchg ax,cx ;Deplace le quotient de la partie haute dans CX et la partie basse(quotient) dans AX 
-        div bx ; AX est le quotient bas, le reste est dans DX=[0,9]
-        push dx ;Sauvegarde le reste 
-        mov dx,cx ;Deplacer le quotient de la partie haute dans DX
-        or cx,ax ;=0 uniquement si cx=0 et ax=0 (quotient de la partie haute et celui de la partie basse =0)
-        jnz diviser16 ;Si !=0 boucler
-        pop dx ;Recuperer l'unite
-    
-    afficher16: 
-        mov ax,dx
-        call ViewNo 
-        pop dx ;Recupere le prochain rang
-        cmp dx,bx ;SI dx=10 alors on est arrive a la fin (le bx empiler au debut)
-        jb afficher16 
-             
-    
-    pop dx
-    pop cx
-    pop bx
-    pop ax 
-    
-    ret  
-    
-view32_16 ENDP  
    
 code ENDS
 
