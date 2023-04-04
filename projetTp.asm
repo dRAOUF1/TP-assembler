@@ -218,69 +218,76 @@ Addition:
     je Addition16
 
 
-Addition10:    
-    mov dx,[bp+2] ;    Afficher a
-    call AfficherNo10
+Addition10: 
+    mov dx ,0   
+    mov ax,[bp+2] ;    Afficher a
+    call view32_10
     
     mov ah,9
     mov dx, offset plus;    Afficher +
     int 21h
     
-    mov dx,[bp] 
-    call AfficherNo10;    Afficher b 
+    mov dx,0
+    mov ax,[bp] 
+    call view32_10;    Afficher b 
         
     mov ah,9
     mov dx, offset egale;   Afficher =
     int 21h 
     
-    pop dx ;    Recuperer a+b
+    pop ax ;    Recuperer a+b  
+    mov dx,0
 
-    call AfficherNo10; Afficher le resultat
+    call view32_10; Afficher le resultat
     
 
     jmp exit 
     
 
-Addition2:    
-    mov dx,[bp+2] ;    Afficher a
-    call AfficherNo2
+Addition2:
+    mov dx,0    
+    mov ax,[bp+2] ;    Afficher a
+    call view32_2
     
     mov ah,9
     mov dx, offset plus;    Afficher +
     int 21h
     
-    mov dx,[bp] 
-    call AfficherNo2;    Afficher b 
+    mov dx,0
+    mov ax,[bp] 
+    call view32_2;    Afficher b 
         
     mov ah,9
     mov dx, offset egale;   Afficher =
     int 21h 
     
-    pop dx ;    Recuperer a+b
-
-    call AfficherNo2; Afficher le resultat
+    pop ax ;    Recuperer a+b
+    mov dx,0
+    call view32_2; Afficher le resultat
     
 
     jmp exit 
 
-Addition16:    
-    mov dx,[bp+2] ;    Afficher a
-    call AfficherNo16
+Addition16:
+    mov dx,0    
+    mov ax,[bp+2] ;    Afficher a
+    call view32_16
     
     mov ah,9
     mov dx, offset plus;    Afficher +
     int 21h
     
-    mov dx,[bp] 
-    call AfficherNo16;    Afficher b 
+    mov dx,0
+    mov ax,[bp] 
+    call view32_16;    Afficher b 
         
     mov ah,9
     mov dx, offset egale;   Afficher =
     int 21h 
     
-    pop dx ;    Recuperer a+b
-
-    call AfficherNo16; Afficher le resultat
+    pop ax ;    Recuperer a+b
+    mov dx,0
+    call view32_16; Afficher le resultat
     
 
     jmp exit
@@ -307,15 +314,17 @@ Soustraction:
     
 Soustraction10:
     
-    mov dx,[bp+2] ;    Afficher a
-    call AfficherNo10
+    mov ax,[bp+2] ;    Afficher a  
+    mov dx,0
+    call view32_10
     
     mov ah,9
     mov dx, offset moins;    Afficher -
     int 21h
     
-    mov dx,[bp] 
-    call AfficherNo10;    Afficher b 
+    mov ax,[bp]
+    mov dx,0 
+    call view32_10;    Afficher b 
         
     mov ah,9
     mov dx, offset egale;   Afficher =
@@ -323,22 +332,24 @@ Soustraction10:
     
 
     
-    pop dx ;    Recuperer a-b
-
-    call AfficherNo10; Afficher le resultat
+    pop ax ;    Recuperer a-b
+    mov dx,0
+    call view32_10; Afficher le resultat
     jmp exit
     
 Soustraction2:
         
-    mov dx,[bp+2] ;    Afficher a
-    call AfficherNo2
+    mov ax,[bp+2] ;    Afficher a
+    mov dx,0
+    call view32_2
     
     mov ah,9
     mov dx, offset moins;    Afficher -
     int 21h
     
-    mov dx,[bp] 
-    call AfficherNo2;    Afficher b 
+    mov ax,[bp] 
+    mov dx,0
+    call view32_2;    Afficher b 
         
     mov ah,9
     mov dx, offset egale;   Afficher =
@@ -346,23 +357,26 @@ Soustraction2:
     
 
     
-    pop dx ;    Recuperer a-b
+    pop ax ;    Recuperer a-b
+    mov dx,0
 
-    call AfficherNo2; Afficher le resultat
+    call view32_2; Afficher le resultat
 
     jmp exit  
     
 Soustraction16:
         
-    mov dx,[bp+2] ;    Afficher a
-    call AfficherNo16
+    mov ax,[bp+2] ;    Afficher a
+    mov dx,0
+    call view32_16
     
     mov ah,9
     mov dx, offset moins;    Afficher -
     int 21h
     
-    mov dx,[bp] 
-    call AfficherNo16;    Afficher b 
+    mov ax,[bp]      
+    mov dx,0
+    call view32_16;    Afficher b 
         
     mov ah,9
     mov dx, offset egale;   Afficher =
@@ -370,9 +384,10 @@ Soustraction16:
     
 
     
-    pop dx ;    Recuperer a-b
+    pop ax ;    Recuperer a-b  
+    mov dx,0
 
-    call AfficherNo16; Afficher le resultat
+    call view32_16; Afficher le resultat
 
     jmp exit
 
@@ -399,15 +414,17 @@ Multiplication:
 
 Multiplication10:
     
-    mov dx,[bp+2] ;    Afficher a
-    call AfficherNo10
+    mov dx,0
+    mov ax,[bp+2] ;    Afficher a
+    call view32_10
     
     mov ah,9
     mov dx, offset fois;    Afficher x
     int 21h
     
-    mov dx,[bp] 
-    call AfficherNo10;    Afficher b 
+    mov dx,0
+    mov ax,[bp] 
+    call view32_10;    Afficher b 
         
     mov ah,9
     mov dx, offset egale;   Afficher =
@@ -421,16 +438,19 @@ Multiplication10:
     jmp exit
 
 
-Multiplication2:
-    mov dx,[bp+2] ;    Afficher a
-    call AfficherNo2
+Multiplication2: 
+    
+    mov dx,0
+    mov ax,[bp+2] ;    Afficher a
+    call view32_2
     
     mov ah,9
     mov dx, offset fois;    Afficher x
     int 21h
-    
-    mov dx,[bp] 
-    call AfficherNo2;    Afficher b 
+            
+    mov dx,0
+    mov ax,[bp] 
+    call view32_2;    Afficher b 
         
     mov ah,9
     mov dx, offset egale;   Afficher =
@@ -443,16 +463,19 @@ Multiplication2:
     call view32_2; Afficher le resultat 
     jmp exit 
 
-Multiplication16:
-    mov dx,[bp+2] ;    Afficher a
-    call AfficherNo16
+Multiplication16: 
+    
+    mov dx,0
+    mov ax,[bp+2] ;    Afficher a
+    call view32_16
     
     mov ah,9
     mov dx, offset fois;    Afficher x
     int 21h
     
-    mov dx,[bp] 
-    call AfficherNo16;    Afficher b 
+    mov dx,0
+    mov ax,[bp] 
+    call view32_16;    Afficher b 
         
     mov ah,9
     mov dx, offset egale;   Afficher =
@@ -490,62 +513,68 @@ Division:
 
 Division10:  
     
-    mov dx,[bp+2] ;    Afficher a
-    call AfficherNo10
+    mov dx,0
+    mov ax,[bp+2] ;    Afficher a
+    call view32_10
     
     mov ah,9
     mov dx, offset par;    Afficher /
     int 21h
     
-    mov dx,[bp] 
-    call AfficherNo10;    Afficher b 
+    mov dx,0
+    mov ax,[bp] 
+    call view32_10;    Afficher b 
         
     mov ah,9
     mov dx, offset egale;   Afficher =
     int 21h 
     
-    pop dx ;    Recuperer  a/b       
-    call AfficherNo10 
+    pop ax ;    Recuperer  a/b 
+    mov dx,0      
+    call view32_10 
    
     jmp exit  
 
-Division2:
-    mov dx,[bp+2] ;    Afficher a
-    call AfficherNo2
+Division2: 
+    mov dx,0
+    mov ax,[bp+2] ;    Afficher a
+    call view32_2
     
     mov ah,9
     mov dx, offset par;    Afficher /
     int 21h
     
     mov dx,[bp] 
-    call AfficherNo2;    Afficher b 
+    call view32_2;    Afficher b 
         
     mov ah,9
     mov dx, offset egale;   Afficher =
     int 21h 
     
     pop dx ;    Recuperer  a/b       
-    call AfficherNo2 
+    call view32_2 
    
     jmp exit 
     
 Division16:
     mov dx,[bp+2] ;    Afficher a
-    call AfficherNo16
+    call view32_16
     
     mov ah,9
     mov dx, offset par;    Afficher /
     int 21h
-    
-    mov dx,[bp] 
-    call AfficherNo16;    Afficher b 
+           
+    mov dx,0
+    mov ax,[bp] 
+    call view32_16;    Afficher b 
         
     mov ah,9
     mov dx, offset egale;   Afficher =
     int 21h 
     
-    pop dx ;    Recuperer  a/b       
-    call AfficherNo16 
+    pop ax ;    Recuperer  a/b 
+    mov dx,0      
+    call view32_16 
    
     jmp exit              
 
@@ -616,83 +645,7 @@ FormNo10 proc
 FormNo10 ENDP
 
 
-View10 proc
-    push ax
-    push bx
-    push cx
-    push dx 
-    
-    finSauvgarde:
-                mov ax,dx
-                mov dx,0
-                div cx
-                call ViewNo
-                mov bx,dx
-                mov dx,0
-                mov ax,cx
-                mov cx,10
-                div cx
-                mov dx,bx
-                mov cx,ax
-                cmp ax,0  
-                jne finSauvgarde 
-    pop dx
-    pop cx
-    pop bx 
-    pop ax
 
-    ret
-    
-View10 ENDP
-
-
-AfficherNo10 proc 
-
-    clc
-    rol dx,1
-    ror dx,1
-    jnc AvantBoucle10
-    neg dx
-
-    push ax
-    push bx
-    push dx    
-    mov ah,2
-    mov dx,"-"
-    int 21h
-    pop dx 
-    pop bx
-    pop ax 
-    
-    AvantBoucle10: 
-        push ax
-        push bx
-        mov ax,10  ;ax=10
-        mov bx,ax  ;bx=10  
-    Boucle10:
-        cmp dx,ax
-        jb fin     ;si dx<ax alors on arriver a un rang en plus  
-        cmp ax,10000
-        je fin5chiffres
-        push dx     
-        mul bx     ;sinon rang suivant 
-        pop dx 
-        jmp Boucle10
-   
-    fin:    
-        push dx  
-        xor dx,dx
-        div bx     ;recuperer le vrai rang (rang en plus / 10)
-        pop dx 
-    fin5chiffres:
-        mov cx,ax 
-        pop bx     ; restaurer bx et ax
-        pop ax
-        call View10 
-         
-    ret  
-    
-AfficherNo10 ENDP
       
 ViewNo proc 
     
@@ -723,6 +676,21 @@ view32_10 proc
     
     mov bx,10 ;Constante 10 stockee dans BX
     push bx ;bx est constant donc on peut l'utiliser comme marqueur pour sortir de la boucle            
+    
+    ;Verfier si le nombre est negatif
+    clc
+    rol ax,1
+    ror ax,1
+    jnc diviser
+    neg ax 
+    
+    push dx
+    push ax
+    mov ah,2
+    mov dx,"-"
+    int 21h
+    pop ax
+    pop dx
     
     diviser: 
         mov cx,ax ;Stocke temporairement le partie bassse dans CX
@@ -808,82 +776,7 @@ FormNo2 proc
     
 FormNo2 ENDP
 
-AfficherNo2 proc 
-    
-    clc
-    rol dx,1
-    ror dx,1
-    jnc AvantBoucle2
-    neg dx
 
-    push ax
-    push bx
-    push dx    
-    mov ah,2
-    mov dx,"-"
-    int 21h
-    pop dx 
-    pop bx
-    pop ax 
-
-    AvantBoucle2: 
-        push ax
-        push bx
-        mov ax,2  ;ax=2
-        mov bx,ax  ;bx=2  
-    Boucle2:
-        cmp dx,ax
-        jb fin2     ;si dx<ax alors on arriver a un rang en plus  
-        cmp ax,4000h
-        je finBcpchiffres
-        push dx     
-        mul bx     ;sinon rang suivant 
-        pop dx
-        jmp Boucle2
-   
-    fin2:    
-        push dx  
-                xor dx,dx
-        div bx     ;recuperer le vrai rang (rang en plus / 10)
-        pop dx 
-    finBcpchiffres:
-        mov cx,ax 
-        pop bx     ; restaurer bx et ax
-        pop ax
-        call View2 
-         
-    ret  
-    
-AfficherNo2 ENDP 
-
-View2 proc
-    push ax
-    push bx
-    push cx
-    push dx 
-    
-    finSauvgarde2:
-                mov ax,dx
-                mov dx,0
-                div cx
-                call ViewNo
-                mov bx,dx
-                mov dx,0
-                mov ax,cx
-                mov cx,2
-                div cx
-                mov dx,bx
-                mov cx,ax
-                cmp ax,0  
-                jne finSauvgarde2 
-    pop dx
-    pop cx
-    pop bx 
-    pop ax
-
-    ret
-    
-View2 ENDP 
 
 view32_2 proc
     
@@ -940,7 +833,7 @@ InputNo16 proc
     cmp al,30h; 30h code asci 0
     jb ErreurInput
     cmp al,39h
-    jbe ErreurInput
+    jbe Decimale
     cmp al,41h; 39h code asci 9
     jb ErreurInput
     cmp al,46h
@@ -987,82 +880,7 @@ FormNo16 proc
     
 FormNo16 ENDP
 
-AfficherNo16 proc 
-    
-    clc
-    rol dx,1
-    ror dx,1
-    jnc AvantBoucle16
-    neg dx
-
-    push ax
-    push bx
-    push dx    
-    mov ah,2
-    mov dx,"-"
-    int 21h
-    pop dx 
-    pop bx
-    pop ax 
-
-    AvantBoucle16: 
-        push ax
-        push bx
-        mov ax,16  ;ax=16
-        mov bx,ax  ;bx=16 
-    Boucle16:
-        cmp dx,ax
-        jb fin16     ;si dx<ax alors on arriver a un rang en plus  
-        cmp ax,1000h
-        je fin4chiffres
-        push dx     
-        mul bx     ;sinon rang suivant 
-        pop dx
-        jmp Boucle16
-   
-    fin16:    
-        push dx  
-                xor dx,dx
-        div bx     ;recuperer le vrai rang (rang en plus / 10)
-        pop dx 
-    fin4chiffres:
-        mov cx,ax 
-        pop bx     ; restaurer bx et ax
-        pop ax
-        call View16 
-         
-    ret  
-    
-AfficherNo16 ENDP 
-
-View16 proc
-    push ax
-    push bx
-    push cx
-    push dx 
-    
-    finSauvgarde16:
-                mov ax,dx
-                mov dx,0
-                div cx
-                call ViewNo
-                mov bx,dx
-                mov dx,0
-                mov ax,cx
-                mov cx,16
-                div cx
-                mov dx,bx
-                mov cx,ax
-                cmp ax,0  
-                jne finSauvgarde16 
-    pop dx
-    pop cx
-    pop bx 
-    pop ax
-
-    ret
-    
-View16 ENDP  
+ 
 
 view32_16 proc
     
