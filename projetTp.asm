@@ -54,24 +54,20 @@ start:
     
     
     ; Affichage du message d'introduction
-    MOV AH, 9
     LEA DX, messageIntro
-    INT 21h 
+    call AfficherChaine 
 debut:
     ; Affichage du message de la base d'operation
-    MOV AH, 9
     LEA DX, baseMsg
-    INT 21h
+    call AfficherChaine 
     
     ; Lecture de la base
-    MOV AH, 1 ; lecture d'un seul charactere
-    INT 21h 
+    call LireChar ; lecture d'un seul charactere
     mov ah,0
     push ax
      
-    mov ah,9
     mov dx, offset saut
-    int 21h
+    call AfficherChaine 
      
     ; Traitement en fonction de la base choisie
 
@@ -98,35 +94,32 @@ debut:
 Input: 
     
     ; Affichage du premier message  
-    mov ah,9
+  
     mov dx,offset Num1
-    int 21h
+    call AfficherChaine
     
-    push cx
+    
     mov cx,0;   Obligatoir avant chaque lecture
     call InputNo 
     
     push dx;    empiler le nombre lu (a)
     
-    mov ah,9
     mov dx,offset Num2
-    int 21h  
+    call AfficherChaine   
     
-    push cx
     mov cx,0;   avant chaque lecture
     call InputNo 
-    pop cx
+
     push dx;    empiler le nombre lu (b) 
       
 
 
 Operation:    
-    mov ah,9
+
     mov dx,offset Menu
-    int 21h
+    call AfficherChaine 
      
-    mov ah,1
-    int 21h 
+    call LireChar 
         
     cmp al,2Bh  ;addition
     je Addition
@@ -163,9 +156,8 @@ ErreurDiv0:
 Addition:
 
     
-    mov ah,9
     mov dx, offset retour
-    int 21h  
+    call AfficherChaine  
 
     mov bp,sp    
     mov bx,[bp]; bx=b
@@ -180,17 +172,15 @@ Addition:
     mov ax,[bp+2] ;    Afficher a
     call view32
     
-    mov ah,9
     mov dx, offset plus;    Afficher +
-    int 21h
+    call AfficherChaine 
     
     mov dx,0
     mov ax,[bp] 
     call view32;    Afficher b 
         
-    mov ah,9
     mov dx, offset egale;   Afficher =
-    int 21h 
+    call AfficherChaine  
     
     pop ax ;    Recuperer a+b  
     mov dx,0
@@ -202,9 +192,8 @@ Addition:
     
 Soustraction:
 
-    mov ah,9
     mov dx, offset retour
-    int 21h  
+    call AfficherChaine   
 
     mov bp,sp    
     mov bx,[bp]; bx=b
@@ -221,17 +210,16 @@ Soustraction:
     mov dx,0
     call view32
     
-    mov ah,9
     mov dx, offset moins;    Afficher -
-    int 21h
+    call AfficherChaine 
     
     mov ax,[bp]
     mov dx,0 
     call view32;    Afficher b 
         
-    mov ah,9
+
     mov dx, offset egale;   Afficher =
-    int 21h 
+    call AfficherChaine  
     
 
     
@@ -244,9 +232,8 @@ Soustraction:
 
 Multiplication:
     
-    mov ah,9
     mov dx, offset retour
-    int 21h  
+    call AfficherChaine   
 
     mov bp,sp    
     mov bx,[bp]; bx=b
@@ -263,17 +250,15 @@ Multiplication:
     mov ax,[bp+2] ;    Afficher a
     call view32
     
-    mov ah,9
     mov dx, offset fois;    Afficher x
-    int 21h
+    call AfficherChaine 
     
     mov dx,0
     mov ax,[bp] 
     call view32;    Afficher b 
         
-    mov ah,9
     mov dx, offset egale;   Afficher =
-    int 21h 
+    call AfficherChaine  
     
     pop dx ;    Recuperer la 1ere partie de axb       
     pop ax ;    Recuperer la 2eme partie de axb 
@@ -285,10 +270,8 @@ Multiplication:
 
 Division:
 
-    
-    mov ah,9
     mov dx, offset retour
-    int 21h  
+    call AfficherChaine   
 
     mov bp,sp  
     xor dx,dx  
@@ -306,17 +289,15 @@ Division:
     mov ax,[bp+2] ;    Afficher a
     call view32
     
-    mov ah,9
     mov dx, offset par;    Afficher /
-    int 21h
+    call AfficherChaine 
     
     mov dx,0
     mov ax,[bp] 
     call view32;    Afficher b 
         
-    mov ah,9
     mov dx, offset egale;   Afficher =
-    int 21h 
+    call AfficherChaine  
     
     pop ax ;    Recuperer  a/b 
     mov dx,0      
@@ -338,7 +319,21 @@ exit:
     
    
     
-    ;Debut des procedure
+    ;Debut des procedure 
+    
+AfficherChaine proc
+    push ax
+    mov ah,9
+    int 21h
+    pop ax
+    ret
+AfficherChaine endp
+
+LireChar proc
+    mov ah,1
+    int 21h
+    ret
+LireChar endp 
         
 InputNo proc
     mov ah,01
