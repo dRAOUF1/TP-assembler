@@ -245,7 +245,6 @@ Multiplication:
     push ax;    Sauvegarder le resultat  
     push dx 
     
-    
     mov dx,0
     mov ax,[bp+2] ;    Afficher a
     call view32
@@ -392,8 +391,7 @@ InputNo proc
         inc cx;         le nombre de chiffres du nombre lu 
         
         jmp InputNo
-     
-    
+         
     FormNo:
         pop ax       
         
@@ -497,9 +495,6 @@ view32 proc
     
 view32 ENDP  
 
-
- 
-   
 code ENDS
 
     
