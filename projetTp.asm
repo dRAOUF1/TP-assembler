@@ -240,7 +240,7 @@ Multiplication:
     mov ax,[bp+2]; dx=a 
       
     
-    mul bx
+    imul bx
    
     push ax;    Sauvegarder le resultat  
     push dx 
@@ -278,31 +278,42 @@ Division:
     
     cmp bx,0
     je ErreurDiv0 
-    mov ax,[bp+2]; dx=a 
+    mov ax,[bp+2]; dx=a
     
-    div bx
-    push ax 
-      
+    ;Gerer le signe manuellement puisque IDIV le gere uniquement lorsque le b est signe
+    cmp ax,0
+    jns Suite1
+    neg ax 
     
-    mov dx,0
-    mov ax,[bp+2] ;    Afficher a
-    call view32
-    
-    mov dx, offset par;    Afficher /
-    call AfficherChaine 
-    
-    mov dx,0
-    mov ax,[bp] 
-    call view32;    Afficher b 
+    Suite1:
+        idiv bx
         
-    mov dx, offset egale;   Afficher =
-    call AfficherChaine  
+        cmp [bp+2],0;   Verifier si a est negatif
+        jns Suite2
+        neg ax  
     
-    pop ax ;    Recuperer  a/b 
-    mov dx,0      
-    call view32 
-   
-    jmp exit  
+    Suite2:   
+        push ax
+        
+        mov dx,0
+        mov ax,[bp+2] ;    Afficher a
+        call view32
+        
+        mov dx, offset par;    Afficher /
+        call AfficherChaine 
+        
+        mov dx,0
+        mov ax,[bp] 
+        call view32;    Afficher b 
+            
+        mov dx, offset egale;   Afficher =
+        call AfficherChaine  
+        
+        pop ax ;    Recuperer  a/b 
+        mov dx,0      
+        call view32 
+       
+        jmp exit  
             
 
 exit:
@@ -343,6 +354,8 @@ InputNo proc
     cmp al,0dh;     enter key
     je FormNo 
      
+    cmp al,"-"
+    je FinConvertion
     ;Dans toute les bases 0<=al<='F'
     cmp al,30h; 30h code asci 0
     jb ErreurInput
@@ -395,24 +408,30 @@ InputNo proc
     FormNo:
         pop ax       
         
-        push dx;    sauvegarder dx (modifier par mul)
-        mul bx;     mettre la chiffre au bon rang
-        jo ErreurOverFlow
-        pop dx;     restaurer dx 
+        cmp al,"-" 
+        jne FinSi
+        neg dx
+        jmp NouvelleIteration 
         
-        add dx,ax
-        jo ErreurOverFlow;  valeur entrer par l'utilisateur superieur a 7FFFh  
-        
-        mov ax,bx;  enregister bx dans ax pour la multiplication apres
-        mov bx,si
-        push dx
-        mul bx;     pour avancer au rang suivant (ax=bx*10)
-        pop dx
-        mov bx,ax;  recuperer le nouveau bx 
-        
-        dec cx;     decrementer le compteur de chiffre du nombre
-        cmp cx,0;   si le nombre de chiffre restant est superieur a 0 on refait l'operation
-        ja FormNo 
+        FinSi:
+            push dx;    sauvegarder dx (modifier par mul)
+            mul bx;     mettre la chiffre au bon rang
+            jo ErreurOverFlow
+            pop dx;     restaurer dx 
+            
+            add dx,ax
+            jo ErreurOverFlow;  valeur entrer par l'utilisateur superieur a 7FFFh  
+            
+            mov ax,bx;  enregister bx dans ax pour la multiplication apres
+            mov bx,si
+            push dx
+            mul bx;     pour avancer au rang suivant (ax=bx*10)
+            pop dx
+            mov bx,ax;  recuperer le nouveau bx 
+        NouvelleIteration:    
+            dec cx;     decrementer le compteur de chiffre du nombre
+            cmp cx,0;   si le nombre de chiffre restant est superieur a 0 on refait l'operation
+            ja FormNo 
     
     ret
     
@@ -450,12 +469,25 @@ view32 proc
     push bx ;bx est constant donc on peut l'utiliser comme marqueur pour sortir de la boucle            
     
     ;Verfier si le nombre est negatif
-    clc
-    rol ax,1
-    ror ax,1
-    jnc diviser
-    neg ax 
+    ;Cas nombre a 32bits
+    cmp dx,0
+    jns dex0:
     
+    ;Calcule du complement a 2 manuelement
+    clc
+    not dx
+    not ax
+    add ax,1
+    adc dx,0
+    jmp AfficherMoins
+    
+    ;Cas nombre a 16bits  
+    dex0:
+        cmp ax,0
+        jns diviser
+        neg ax 
+    
+    AfficherMoins:
     push dx
     push ax
     mov ah,2
