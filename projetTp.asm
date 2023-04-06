@@ -100,7 +100,7 @@ Input:
     
     
     mov cx,0;   Obligatoir avant chaque lecture
-    call InputNo 
+    call LireNombre 
     
     push dx;    empiler le nombre lu (a)
     
@@ -108,7 +108,7 @@ Input:
     call AfficherChaine   
     
     mov cx,0;   avant chaque lecture
-    call InputNo 
+    call LireNombre 
 
     push dx;    empiler le nombre lu (b) 
       
@@ -170,14 +170,14 @@ Addition:
 
     mov dx ,0   
     mov ax,[bp+2] ;    Afficher a
-    call view32
+    call Afficher32
     
     mov dx, offset plus;    Afficher +
     call AfficherChaine 
     
     mov dx,0
     mov ax,[bp] 
-    call view32;    Afficher b 
+    call Afficher32;    Afficher b 
         
     mov dx, offset egale;   Afficher =
     call AfficherChaine  
@@ -185,7 +185,7 @@ Addition:
     pop ax ;    Recuperer a+b  
     mov dx,0
 
-    call view32; Afficher le resultat
+    call Afficher32; Afficher le resultat
     
 
     jmp exit 
@@ -208,14 +208,14 @@ Soustraction:
 
     mov ax,[bp+2] ;    Afficher a  
     mov dx,0
-    call view32
+    call Afficher32
     
     mov dx, offset moins;    Afficher -
     call AfficherChaine 
     
     mov ax,[bp]
     mov dx,0 
-    call view32;    Afficher b 
+    call Afficher32;    Afficher b 
         
 
     mov dx, offset egale;   Afficher =
@@ -225,7 +225,7 @@ Soustraction:
     
     pop ax ;    Recuperer a-b
     mov dx,0
-    call view32; Afficher le resultat
+    call Afficher32; Afficher le resultat
     jmp exit
     
 
@@ -247,14 +247,14 @@ Multiplication:
     
     mov dx,0
     mov ax,[bp+2] ;    Afficher a
-    call view32
+    call Afficher32
     
     mov dx, offset fois;    Afficher x
     call AfficherChaine 
     
     mov dx,0
     mov ax,[bp] 
-    call view32;    Afficher b 
+    call Afficher32;    Afficher b 
         
     mov dx, offset egale;   Afficher =
     call AfficherChaine  
@@ -263,7 +263,7 @@ Multiplication:
     pop ax ;    Recuperer la 2eme partie de axb 
 
 
-    call view32; Afficher le resultat 
+    call Afficher32; Afficher le resultat 
     jmp exit
 
 
@@ -297,21 +297,21 @@ Division:
         
         mov dx,0
         mov ax,[bp+2] ;    Afficher a
-        call view32
+        call Afficher32
         
         mov dx, offset par;    Afficher /
         call AfficherChaine 
         
         mov dx,0
         mov ax,[bp] 
-        call view32;    Afficher b 
+        call Afficher32;    Afficher b 
             
         mov dx, offset egale;   Afficher =
         call AfficherChaine  
         
         pop ax ;    Recuperer  a/b 
         mov dx,0      
-        call view32 
+        call Afficher32 
        
         jmp exit  
             
@@ -345,14 +345,14 @@ LireChar proc
     ret
 LireChar endp 
         
-InputNo proc
+LireNombre proc
     mov ah,01
     int 21h
     
     mov dx,0
     mov bx,1;       initialiser bx avant de former le nombre 
     cmp al,0dh;     enter key
-    je FormNo 
+    je FormerNombre 
      
     cmp al,"-"
     je FinConvertion
@@ -403,9 +403,9 @@ InputNo proc
         push ax
         inc cx;         le nombre de chiffres du nombre lu 
         
-        jmp InputNo
+        jmp LireNombre
          
-    FormNo:
+    FormerNombre:
         pop ax       
         
         cmp al,"-" 
@@ -431,23 +431,23 @@ InputNo proc
         NouvelleIteration:    
             dec cx;     decrementer le compteur de chiffre du nombre
             cmp cx,0;   si le nombre de chiffre restant est superieur a 0 on refait l'operation
-            ja FormNo 
+            ja FormerNombre 
     
     ret
     
-InputNo ENDP
+LireNombre ENDP
     
       
-ViewNo proc 
+AfficherNombre proc 
     
     push ax
     push dx
     mov dx,ax
     cmp dx,9
-    ja  ViewNo16
+    ja  AfficherNombre16
     add dl,30h
     jmp FinView
-    ViewNo16:
+    AfficherNombre16:
         add dl,37h
     FinView:
         mov ah,2
@@ -456,10 +456,10 @@ ViewNo proc
         pop ax    
     ret   
     
-ViewNo ENDP 
+AfficherNombre ENDP 
 
 
-view32 proc
+Afficher32 proc
     push ax
     push bx
     push cx
@@ -512,7 +512,7 @@ view32 proc
     
     afficher: 
         mov ax,dx
-        call ViewNo
+        call AfficherNombre
         pop dx ;Recupere le prochain rang
         cmp dx,bx ;SI dx=10 alors on est arrive a la fin (le bx empiler au debut)
         jb afficher 
@@ -525,7 +525,7 @@ view32 proc
 
     ret  
     
-view32 ENDP  
+Afficher32 ENDP  
 
 code ENDS
 
