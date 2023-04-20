@@ -369,7 +369,7 @@ code segment
         je FormerNombre;    Lecture terminer donc formation du nombre dans la memoire 
          
         cmp al,"-";         Si l'utilisateur entre - alors le nombre est negatif en saute la conversion
-        je FormerNombre  
+        je Finconversion  
         
         ;Dans toute les bases 0<=al<='F'
         cmp al,30h; 30h code asci 0
